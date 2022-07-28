@@ -2,7 +2,7 @@ const GENERIC_COCKTAIL_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search
 
 
 function getDrinkByFirstLetter() {
-let firstLetter = 'm'
+let firstLetter = 'o'
     axios.get(`${GENERIC_COCKTAIL_URL}${firstLetter}`)
     .then(response => {
         displayCocktail(response.data)
@@ -22,16 +22,19 @@ function displayCocktail(cocktail) {
     let currentDrink = cocktail.drinks[0]
     console.log(currentDrink)
 
+    ////// DRINK CARD //////
     let drinkCard = document.querySelector('.drink-card')
     let drinkName = document.createElement('h1')
     drinkName.classList.add('drink-name')
     drinkCard.appendChild(drinkName)
     drinkName.innerText = currentDrink.strDrink
 
+    ////// PICTURE //////
     let pic = document.createElement('img')
     pic.src = `${currentDrink.strDrinkThumb}`
     drinkCard.appendChild(pic)
 
+    ////// INGREDIENTS LIST //////
     let ingredientsList = document.createElement('ul')
     ingredientsList.classList.add('ingredients-list')
     drinkCard.appendChild(ingredientsList)
@@ -55,11 +58,13 @@ function displayCocktail(cocktail) {
         ingredientsList.appendChild(ingredient)
     }
 
+    ////// GLASS //////
     let glass = document.createElement('h3')
     glass.classList.add('glass-name')
-    glass.innerText = `Glass - ${currentDrink.strGlass}`
+    glass.innerText = `Glass: ${currentDrink.strGlass}`
     ingredientsList.appendChild(glass)
 
+    ////// DIRECTIONS //////
     let directionsCard = document.createElement('div')
     directionsCard.classList.add('directions-card')
     directionsCard.innerHTML = currentDrink.strInstructions
