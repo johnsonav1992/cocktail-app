@@ -1,0 +1,96 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: lightslategray;
+}
+
+.drink-input {
+    margin: 20px;
+    width: 250px;
+}
+
+.drink-name {
+    font-size: 2.25rem;
+    font-family: sans-serif;
+    color: rgb(170, 170, 173);
+    
+}
+
+.drink-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-height: auto;
+    width: 400px;
+    padding: 20px;
+    background-color: rgb(76, 76, 76);
+    border: 2px solid lightgrey;
+    border-radius: .5em;
+}
+
+.ingredients-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    min-width: 50%;
+    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+    background-color: rgb(76, 76, 76);
+    border: 2px solid lightgrey;
+    border-radius: .5em;
+    box-shadow: 0px 2px 5px 3px rgb(26, 27, 27) inset;
+
+}
+
+.glass-name {
+    color: rgb(170, 170, 173);
+    font-family: sans-serif;
+}
+
+.ingredients-list-title {
+    color: rgb(170, 170, 173);
+    font-size: 1.5rem;
+    font-family: sans-serif;
+}
+
+.ingredient {
+    list-style-type: none;
+    text-align: justify;
+    color: white;
+    font-size: 1.25rem;
+    font-family: sans-serif;
+}
+
+img {
+    width: 60%;
+    height: auto;
+    box-shadow: 3px 3px 10px rgb(26, 27, 27);
+    border-radius: .5em;
+}
+
+.directions-card {
+    height: auto;
+    min-width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    min-width: 50%;
+    padding: 0px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+    background-color: rgb(76, 76, 76);
+    border: 2px solid lightgrey;
+    border-radius: .5em;
+    color: white;
+    font-family: sans-serif;
+}
