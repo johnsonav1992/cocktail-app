@@ -5,21 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer src="cocktails.js"></script>
     <link rel="stylesheet" href="styles.css">
     <title>Cocktail App</title>
 </head>
 <body>
-    <form>
-        <form>
-            <input class="drink-input" type="text" placeholder="Input a drink Number between 1 & 10">
+        <form class="drinks-form">
+            <select name="" id="letter-select" class="letters-dropdown"></select>
+            <select name="drinks" class="drink-dropdown"></select>
             <button class="load-drink-btn">Load Drink</button>
         </form>
-    </form>
     <section class="drink-card">
-        <!-- <div class="drink-pic"></div>
-        <ul class="ingredients"></ul>
-        <article class="insrtuctions"></article> -->
+        <h1 class="drink-name">Test Drink name</h1>
+        <div class="container">
+        <img class="drink-image" src="" alt="">
+        <div class="ingredients-list-section">
+            <h2 class="ingredients-list-title">Ingredients</h2>
+            <ul class="ingredients-list">
+            </ul>
+            <h3 class="glass-name"></h3>
+        </ul>
+        </div>
+        <div class="directions-card">Make this cocktail, please!</div>
+        </div>
     </section>
 
 </body>
