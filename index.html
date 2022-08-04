@@ -7,29 +7,45 @@
     <script src="./node_modules/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer src="cocktails.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <title>Cocktail App</title>
 </head>
 <body>
-        <form class="drinks-form">
-            <select name="" id="letter-select" class="letters-dropdown"></select>
-            <select name="drinks" class="drink-dropdown"></select>
-            <button class="load-drink-btn">Load Drink</button>
-        </form>
-    <section class="drink-card">
-        <h1 class="drink-name">Test Drink name</h1>
-        <div class="container">
-        <img class="drink-image" src="" alt="">
-        <div class="ingredients-list-section">
-            <h2 class="ingredients-list-title">Ingredients</h2>
-            <ul class="ingredients-list">
+    <div class="site-wrapper">
+    <header class="header">
+        <div class="title-box">
+            <img class="logo" src="./images/martini-glass-transparent-background-21.png" alt="">
+            <h1 class="header-title">COCKTAIL CENTRAL</h1>
+        </div>
+    </header>
+    <main class="main-area">
+        <section class="drink-card">
+            <h1 class="drink-name">Test Drink name</h1>
+            <div class="container">
+            <img class="drink-image" src="" alt="">
+            <div class="ingredients-list-section">
+                <h2 class="ingredients-list-title">Ingredients</h2>
+                <ul class="ingredients-list">
+                </ul>
+                <h3 class="glass-name"></h3>
             </ul>
-            <h3 class="glass-name"></h3>
-        </ul>
-        </div>
-        <div class="directions-card">Make this cocktail, please!</div>
-        </div>
-    </section>
-
+            </div>
+            <div class="directions-card">Make this cocktail, please!</div>
+            </div>
+        </section>
+        <section class="options-box">
+            <form class="drinks-form">
+                <select name="" id="letter-select" class="letters-dropdown">
+                    <option value="">Choose a letter</option>
+                </select>
+                <select name="drinks" class="drink-dropdown"></select>
+                <button class="load-drink-btn">Load Drink</button>
+            </form>
+        </section>
+    </main>
+    </div>
 </body>
 </html>

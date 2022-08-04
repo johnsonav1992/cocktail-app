@@ -1,5 +1,7 @@
-const GENERIC_COCKTAIL_URL =
-	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
+const baseURL = `http://localhost:3000/drinks`
+
+//// Initialize dropdown of letters on window load
+populateLettersDropdown()
 
 ////// DISPLAY COCKTAIL ////////
 function displayCocktail(cocktail, index) {
@@ -7,12 +9,11 @@ function displayCocktail(cocktail, index) {
 	let currentDrink = cocktail.drinks[index]
 
 	////// DRINK CARD //////
-	let drinkCard = document.querySelector('.drink-card')
 	let drinkName = document.querySelector('.drink-name')
 	drinkName.innerText = currentDrink.strDrink
 
 	////// PICTURE //////
-	let pic = document.querySelector('img')
+	let pic = document.querySelector('.drink-image')
 	pic.src = `${currentDrink.strDrinkThumb}`
 
 	////// INGREDIENTS LIST //////
@@ -50,6 +51,10 @@ function displayCocktail(cocktail, index) {
     
 }
 
+////// GET RANDOM COCKTAIL /////////
+function getRandomCocktail(cocktail) {
+
+}
 
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
@@ -82,13 +87,14 @@ function populateDrinkDropdown(cocktails, letter) {
 		the prev. drink before repopulating */
 		$('.ingredient').detach()
 		
-		axios
-			.get(`${GENERIC_COCKTAIL_URL}${letter}`)
-			.then(res => displayCocktail(res.data, index))
+		axios.get(`${baseURL}/${letter}`)
+			.then(response => displayCocktail(response.data, index))
+			.catch(err => console.log(err))
 	})
 
 }
 
+////// POPULATE LETTERS DROPDOWN ////////
 function populateLettersDropdown() {
 	let alpha = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
@@ -100,10 +106,14 @@ function populateLettersDropdown() {
 
 	$('.letters-dropdown').change(e => {
 		let letter = e.target.value
-		axios.get(`${GENERIC_COCKTAIL_URL}${letter}`).then(res => populateDrinkDropdown(res.data, letter))
+		axios.get(`${baseURL}/${letter}`).then(response => {
+			console.log(response)
+			populateDrinkDropdown(response.data, letter)
+		})
+		
 	})
 }
 	
 
-populateLettersDropdown()
+
 
