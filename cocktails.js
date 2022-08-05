@@ -18,6 +18,7 @@ function displayCocktail(cocktail, index = 0) {
 	pic.src = `${currentDrink.strDrinkThumb}`
 
 	////// INGREDIENTS LIST //////
+	$('.ingredient').detach() // jQuery used to remove the ingredients from the previous drink
 	let ingredientsList = document.querySelector('.ingredients-list')
 	let ingredientsListTitle = document.querySelector('.ingredients-list-title')
 	ingredientsListTitle.innerHTML = 'Ingredients'
@@ -67,7 +68,7 @@ function getRandomCocktail() {
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
 
-	$('.option').detach()
+	$('.option').detach() //jQuery to remove old options before repopulating
 
 	for (let i = 0; i < cocktails.drinks.length; i++) {
 		let select = document.querySelector('.drink-dropdown')
@@ -90,10 +91,6 @@ function populateDrinkDropdown(cocktails, letter) {
 		let index = cocktails.drinks.findIndex(object => 
 			 object.idDrink == opt
 		)
-
-		/* jQuery used to remove the ingredients from 
-		the prev. drink before repopulating */
-		$('.ingredient').detach()
 		
 		axios.get(`${baseURL}/${letter}`)
 			.then(response => displayCocktail(response.data, index))
