@@ -12,15 +12,5 @@ module.exports = {
                 res.status(200).send(response.data)
             })
             .catch(err => console.log(err))
-    },
-    getRandomCocktail: (req, res) => {
-        let { random } = req.params
-
-        axios.get(`https://www.thecocktaildb.com/api/json/v1/1/${random}.php`)
-            .then(response => {
-                res.status(200).send(response.data)
-            })
-            .catch(err => console.log(err))
-
     }
 }

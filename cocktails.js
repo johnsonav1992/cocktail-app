@@ -1,10 +1,11 @@
 const baseURL = `http://localhost:3000/drinks`
 
-//// Initialize dropdown of letters on window load
+//// Invoke starter functions on window load
 populateLettersDropdown()
+getRandomCocktail()
 
 ////// DISPLAY COCKTAIL ////////
-function displayCocktail(cocktail, index) {
+function displayCocktail(cocktail, index = 0) {
     
 	let currentDrink = cocktail.drinks[index]
 
@@ -52,8 +53,15 @@ function displayCocktail(cocktail, index) {
 }
 
 ////// GET RANDOM COCKTAIL /////////
-function getRandomCocktail(cocktail) {
+function getRandomCocktail() {
+	let randomButton = document.querySelector('.random-cocktail')
 
+	randomButton.addEventListener('click', () => {
+		axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
+			.then(response => displayCocktail(response.data))
+			.catch(err => console.log(err))
+	})
+	
 }
 
 ////// POPULATE DRINK DROPDOWN ////////
