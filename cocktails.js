@@ -22,8 +22,9 @@ function displayCocktail(cocktail, index = 0) {
 	let ingredientsList = document.querySelector('.ingredients-list')
 	let ingredientsListTitle = document.querySelector('.ingredients-list-title')
 	ingredientsListTitle.innerHTML = 'Ingredients'
+	let numOfIngredients = 15
 
-	for (let i = 1; i <= 15; i++) {
+	for (let i = 1; i <= numOfIngredients; i++) {
 		
 		if (
 			currentDrink[`strIngredient${i}`] == null ||
