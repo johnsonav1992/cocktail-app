@@ -1,8 +1,9 @@
-const baseURL = `http://localhost:3000/drinks`
+const baseURL = `http://localhost:4000/drinks`
+let addFavoriteButton = document.querySelector('.add-favorite-btn')
 
 //// Invoke starter functions on window load
 populateLettersDropdown()
-getRandomCocktail()
+// getRandomCocktail()
 
 ////// DISPLAY COCKTAIL ////////
 function displayCocktail(cocktail, index = 0) {
@@ -20,7 +21,7 @@ function displayCocktail(cocktail, index = 0) {
 	////// INGREDIENTS LIST //////
 	$('.ingredient').detach() // jQuery used to remove the ingredients from the previous drink
 	let ingredientsList = document.querySelector('.ingredients-list')
-	let ingredientsListTitle = document.querySelector('.ingredients-list-title')
+	let ingredientsListTitle = document.querySelector('.list-title')
 	ingredientsListTitle.innerHTML = 'Ingredients'
 	let numOfIngredients = 15
 
@@ -54,17 +55,17 @@ function displayCocktail(cocktail, index = 0) {
     
 }
 
-////// GET RANDOM COCKTAIL /////////
-function getRandomCocktail() {
-	let randomButton = document.querySelector('.random-cocktail')
+// ////// GET RANDOM COCKTAIL /////////
+// function getRandomCocktail() {
+// 	let randomButton = document.querySelector('.random-cocktail')
 
-	randomButton.addEventListener('click', () => {
-		axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
-			.then(response => displayCocktail(response.data))
-			.catch(err => console.log(err))
-	})
+// 	randomButton.addEventListener('click', () => {
+// 		axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
+// 			.then(response => displayCocktail(response.data))
+// 			.catch(err => console.log(err))
+// 	})
 	
-}
+// }
 
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
@@ -119,6 +120,55 @@ function populateLettersDropdown() {
 		
 	})
 }
+
+function addFavorite(e) {
+
+	let drinkId = e.target.parentNode.parentNode.children[1][1][e.target.parentNode.parentNode.children[1][1].selectedIndex].value
+	let drinkLetter = e.target.parentNode.parentNode.children[1][0][e.target.parentNode.parentNode.children[1][0].selectedIndex].value
+	let drinkName = e.target.parentNode.parentNode.children[1][1][e.target.parentNode.parentNode.children[1][1].selectedIndex].innerHTML
+
+	console.log(`%c${drinkId}`, `background-color: red;`)
+	console.log(`%c${drinkLetter}`, `background-color: aquamarine;`)
+	console.log(`%c${drinkName}`, `background-color: lightyellow;`)
+
+	let drinkObj = {
+		id: drinkId,
+		name: drinkName,
+		letter: drinkLetter
+	}
+
+	console.log(drinkObj)
+
+	axios.post(`${baseURL}/favorites`, drinkObj)
+		.then(response => {
+			let { data } = response
+			addFavoriteItem(data)
+		})
+		.catch(error => {
+			console.log(error)
+		})
+
+}
+
+function addFavoriteItem(drinkObj) {
+	let { id, letter, name } = drinkObj
+	let favoritesBox = document.querySelector('.favorites-box')
+	let favoriteLi = document.createElement('li')
+	favoriteLi.classList.add('favorite')
+	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
+							<div class="button-container">
+								<button class="button">Load</button>
+								<button class="button">Remove</button>
+							</div>`	
+	for (let i = 0; i < favoritesBox.children.length; i++) {
+		if (favoritesBox.children[i].firstChild.innerHTML === name) 
+		return alert('You already added that drink!')
+	}
+	favoritesBox.appendChild(favoriteLi)
+	
+}
+
+addFavoriteButton.addEventListener('click', addFavorite)
 	
 
 
