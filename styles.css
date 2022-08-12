@@ -53,7 +53,7 @@ body {
 }
 
 .logo {
-    max-width: 100%;
+    max-width: 3em;
     box-shadow: none;
     filter: drop-shadow(0px 0px 3px #8b513e)
 }
@@ -89,6 +89,12 @@ body {
 
 .drink-card {
     padding-top: 1rem;
+    min-width: 400px;
+}
+
+.options-box {
+    min-width: 500px;
+    align-items: flex-start;
 }
 
 .drink-name {
@@ -182,4 +188,58 @@ body {
 
 .button {
     font-size: 1rem;
+    font-family: 'Contrail One', sans-serif;
+    min-width: max-content;
+    border: none;
+    background-color: hsl(15, 38%, 70%);
+    border-radius: .5em;
+    padding: .25rem .75rem;
+    box-shadow: 2px 1px 5px gray;
+    cursor: pointer;
+    color: #8b513e;
+}
+
+.button:hover {
+    background-color: hsl(15, 47%, 79%);
+}
+
+.drinks-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    gap: 1rem;
+}
+
+.dropdown {
+    border: none;
+    background-color: hsl(217, 74%, 70%);
+    border-radius: .5em;
+    padding: .25rem;
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+}
+
+.dropdown option:not(:checked) {
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    background-color: hsl(217, 74%, 70%);
+}
+
+.dropdown:hover {
+    background-color: hsl(217, 77%, 85%);
+}
+
+.letters-dropdown {
+    max-width: 50px;
+}
+
+.drink-dropdown {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.select-drink-title {
+    align-self: flex-start;
 }
