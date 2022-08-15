@@ -1,9 +1,19 @@
 const baseURL = `http://localhost:4000/drinks`
+
+//// SELECTORS /////
 let addFavoriteButton = document.querySelector('.add-favorite-btn')
+let favoritesBox = document.querySelector('.favorites-box')
 
 //// Invoke starter functions on window load
 populateLettersDropdown()
+initDisplay() //initialize the drink to be displayed on first load
 // getRandomCocktail()
+
+function initDisplay() {
+	axios.get(`${baseURL}/m`)
+			.then(response => displayCocktail(response.data, 4))
+			.catch(err => console.log(err))
+}
 
 ////// DISPLAY COCKTAIL ////////
 function displayCocktail(cocktail, index = 0) {
@@ -42,9 +52,8 @@ function displayCocktail(cocktail, index = 0) {
 			currentDrink[[`strIngredient${i}`]]}`
 		ingredient.classList.add('ingredient')
 		ingredientsList.append(ingredient)
-		
-		
 	}
+
 	////// GLASS //////
     let glass = document.querySelector('.glass-name')
 	glass.innerText = `Glass: ${currentDrink.strGlass}`
@@ -116,8 +125,7 @@ function populateLettersDropdown() {
 		axios.get(`${baseURL}/${letter}`).then(response => {
 			console.log(response)
 			populateDrinkDropdown(response.data, letter)
-		})
-		
+		})	
 	})
 }
 
@@ -127,9 +135,9 @@ function addFavorite(e) {
 	let drinkLetter = e.target.parentNode.parentNode.children[1][0][e.target.parentNode.parentNode.children[1][0].selectedIndex].value
 	let drinkName = e.target.parentNode.parentNode.children[1][1][e.target.parentNode.parentNode.children[1][1].selectedIndex].innerHTML
 
-	console.log(`%c${drinkId}`, `background-color: red;`)
-	console.log(`%c${drinkLetter}`, `background-color: aquamarine;`)
-	console.log(`%c${drinkName}`, `background-color: lightyellow;`)
+	console.log(`%c ID: ${drinkId}`, `color: red;`)
+	console.log(`%c Letter: ${drinkLetter}`, `color: aquamarine;`)
+	console.log(`%c Name: ${drinkName}`, `color: lightyellow;`)
 
 	let drinkObj = {
 		id: drinkId,
@@ -142,6 +150,7 @@ function addFavorite(e) {
 	axios.post(`${baseURL}/favorites`, drinkObj)
 		.then(response => {
 			let { data } = response
+			console.log(data)
 			addFavoriteItem(data)
 		})
 		.catch(error => {
@@ -150,15 +159,31 @@ function addFavorite(e) {
 
 }
 
-function addFavoriteItem(drinkObj) {
-	let { id, letter, name } = drinkObj
-	let favoritesBox = document.querySelector('.favorites-box')
+function deleteFavorite(drinkId) {
+	axios.delete(`${baseURL}/favorites/${drinkId}`)
+        .then(response => {
+			let id = response.data
+
+			for (let i = 0; i < favoritesBox.children.length; i++) {
+				if (favoritesBox.children[i].getAttribute('id') === String(id)) {
+					favoritesBox.children[i].remove()
+				}
+			}
+        })
+        .catch(err => {
+            console.log(err)
+		})
+}
+
+function addFavoriteItem(drinkArr) {
+	let [ id, name, letter ] = drinkArr
 	let favoriteLi = document.createElement('li')
 	favoriteLi.classList.add('favorite')
+	favoriteLi.setAttribute('id', id)
 	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
 							<div class="button-container">
 								<button class="button">Load</button>
-								<button class="button">Remove</button>
+								<button onClick='deleteFavorite(${id})'  class="delete-btn button"><strong>✘</strong></button>
 							</div>`	
 	for (let i = 0; i < favoritesBox.children.length; i++) {
 		if (favoritesBox.children[i].firstChild.innerHTML === name) 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "cocktails.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,11 @@
   "dependencies": {
     "axios": "^0.27.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "jquery": "^3.6.0"
+    "jquery": "^3.6.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.21.3"
   }
 }
