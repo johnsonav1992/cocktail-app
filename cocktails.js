@@ -7,6 +7,7 @@ let favoritesBox = document.querySelector('.favorites-box')
 //// Invoke starter functions on window load
 populateLettersDropdown()
 initDisplay() //initialize the drink to be displayed on first load
+loadFavorites()
 // getRandomCocktail()
 
 function initDisplay() {
@@ -130,6 +131,8 @@ function populateLettersDropdown() {
 }
 
 function addFavorite(e) {
+	let listItemLength = e.target.parentNode.parentNode.children[3].children.length
+	if (listItemLength === 10) return alert('You have reached the max amount of favorites!')
 
 	let drinkId = e.target.parentNode.parentNode.children[1][1][e.target.parentNode.parentNode.children[1][1].selectedIndex].value
 	let drinkLetter = e.target.parentNode.parentNode.children[1][0][e.target.parentNode.parentNode.children[1][0].selectedIndex].value
@@ -162,10 +165,11 @@ function addFavorite(e) {
 function deleteFavorite(drinkId) {
 	axios.delete(`${baseURL}/favorites/${drinkId}`)
         .then(response => {
-			let id = response.data
+			let drink = response.data
+			console.log(response)
 
 			for (let i = 0; i < favoritesBox.children.length; i++) {
-				if (favoritesBox.children[i].getAttribute('id') === String(id)) {
+				if (favoritesBox.children[i].getAttribute('id') === String(drink.drinkId)) {
 					favoritesBox.children[i].remove()
 				}
 			}
@@ -175,22 +179,51 @@ function deleteFavorite(drinkId) {
 		})
 }
 
-function addFavoriteItem(drinkArr) {
-	let [ id, name, letter ] = drinkArr
+function addFavoriteItem(drinkObj) {
+	let { id, name, letter } = drinkObj
 	let favoriteLi = document.createElement('li')
 	favoriteLi.classList.add('favorite')
 	favoriteLi.setAttribute('id', id)
+	// for (let i = 0; i < favoritesBox.children.length; i++) {
+	// 	if (favoritesBox.children[i].firstChild.innerHTML === name) 
+	// 	return alert('You already added that drink!')
+	// }
 	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
 							<div class="button-container">
-								<button class="button">Load</button>
-								<button onClick='deleteFavorite(${id})'  class="delete-btn button"><strong>✘</strong></button>
+								<button class="button" onClick="reloadDrink(${id}, '${letter}')">Load</button>
+								<button onClick='deleteFavorite(${id})'   class="delete-btn button"><strong>✘</strong></button>
 							</div>`	
-	for (let i = 0; i < favoritesBox.children.length; i++) {
-		if (favoritesBox.children[i].firstChild.innerHTML === name) 
-		return alert('You already added that drink!')
-	}
+	
 	favoritesBox.appendChild(favoriteLi)
 	
+}
+
+
+function loadFavorites() {
+	axios.get(`${baseURL}`)
+		.then(response => {
+			console.log(response)
+			response.data.forEach(drink => {
+				console.log(drink)
+				addFavoriteItem(drink)
+			})
+		})
+		.catch(err => console.error(err))
+}
+
+function reloadDrink(id, letter) {
+	console.log(id, letter)
+	axios.get(`${baseURL}/${letter}`).then(response => {
+		console.log(response)
+		let index = response.data.drinks.findIndex(object => 
+			object.idDrink == String(id))
+	   
+	   axios.get(`${baseURL}/${letter}`)
+		   .then(response => displayCocktail(response.data, index))
+		   .catch(err => console.log(err))
+	})	
+
+
 }
 
 addFavoriteButton.addEventListener('click', addFavorite)

@@ -1,11 +1,6 @@
 const axios = require('axios')
-
-const GENERIC_COCKTAIL_URL =
-	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
-
 require('dotenv').config()
 const Sequelize = require('sequelize')
-    
 const { CONNECTION_STRING } = process.env 
     
 const sequelize = new Sequelize(CONNECTION_STRING, {
@@ -16,6 +11,9 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
         }
     }
 })
+
+const GENERIC_COCKTAIL_URL =
+	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
 
 module.exports = {
     getDrinksByLetter: (req, res) => {
@@ -33,18 +31,41 @@ module.exports = {
 
         sequelize.query(`
         INSERT INTO favorite_drinks (drink_id, drink_name, drink_letter)
-        VALUES (${id}, '${name}', '${letter}')
-        `)
+        VALUES (?, ?, ?)
+        `, { replacements: [id, name, letter] })
         .then(dbRes => {
-            res.status(200).send([...dbRes[0], id, name, letter])
+            res.status(200).send({...dbRes[0], id, name, letter})
         })
         .catch(err => console.log(err))
     },
 
     deleteFavorite: (req, res) => {
         let { drinkId } = req.params
-        console.log(drinkId)
+        
+        sequelize.query(`
+        DELETE FROM favorite_drinks 
+        WHERE drink_id = ?
+        `, { replacements: [ drinkId ] })
+        .then(dbRes => {
+            res.status(200).send({...dbRes[0], drinkId})
+        })
+        .catch(err => {
+            console.error(err)
+        })
+    },
 
-        res.status(200).send(drinkId)
-    }
+    getFavorites: (req, res) => {
+        sequelize.query('SELECT drink_id AS id, drink_name AS name, drink_letter AS letter FROM favorite_drinks')
+        .then(dbRes => {
+            console.log(dbRes[0])
+            res.status(200).send(dbRes[0])
+        })
+        .catch(err => {
+            console.error(err)
+        })
+    },
+
+    // loadFavorite: (req, res) => {
+
+    // }
 }
