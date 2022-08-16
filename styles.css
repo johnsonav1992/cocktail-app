@@ -250,12 +250,14 @@ body {
     align-items: center;
     gap: 1rem;
     max-width: 100%;
+    border-bottom: 1px solid #164795;
+    margin-bottom: 1rem;
 }
 
 .favorites-box {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .5rem;
     overflow-y: scroll;
 }
 

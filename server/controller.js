@@ -31,8 +31,7 @@ module.exports = {
 
         sequelize.query(`
         INSERT INTO favorite_drinks (drink_id, drink_name, drink_letter)
-        VALUES (?, ?, ?)
-        `, { replacements: [id, name, letter] })
+        VALUES (?, ?, ?)`, { replacements: [id, name, letter] })
         .then(dbRes => {
             res.status(200).send({...dbRes[0], id, name, letter})
         })
@@ -44,8 +43,7 @@ module.exports = {
         
         sequelize.query(`
         DELETE FROM favorite_drinks 
-        WHERE drink_id = ?
-        `, { replacements: [ drinkId ] })
+        WHERE drink_id = ?`, { replacements: [ drinkId ] })
         .then(dbRes => {
             res.status(200).send({...dbRes[0], drinkId})
         })
@@ -63,9 +61,5 @@ module.exports = {
         .catch(err => {
             console.error(err)
         })
-    },
-
-    // loadFavorite: (req, res) => {
-
-    // }
+    }
 }

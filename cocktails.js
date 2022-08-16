@@ -1,13 +1,13 @@
 const baseURL = `http://localhost:4000/drinks`
 
-//// SELECTORS /////
+//// GLOBAL SELECTORS /////
 let addFavoriteButton = document.querySelector('.add-favorite-btn')
 let favoritesBox = document.querySelector('.favorites-box')
 
 //// Invoke starter functions on window load
+loadFavorites()
 populateLettersDropdown()
 initDisplay() //initialize the drink to be displayed on first load
-loadFavorites()
 // getRandomCocktail()
 
 function initDisplay() {
@@ -30,14 +30,13 @@ function displayCocktail(cocktail, index = 0) {
 	pic.src = `${currentDrink.strDrinkThumb}`
 
 	////// INGREDIENTS LIST //////
-	$('.ingredient').detach() // jQuery used to remove the ingredients from the previous drink
+	$('.ingredient').detach() // jQuery to remove the ingredients from the previous drink
 	let ingredientsList = document.querySelector('.ingredients-list')
 	let ingredientsListTitle = document.querySelector('.list-title')
 	ingredientsListTitle.innerHTML = 'Ingredients'
 	let numOfIngredients = 15
 
 	for (let i = 1; i <= numOfIngredients; i++) {
-		
 		if (
 			currentDrink[`strIngredient${i}`] == null ||
 			currentDrink[`strIngredient${i}`] === ''
@@ -130,9 +129,10 @@ function populateLettersDropdown() {
 	})
 }
 
+/////// ADD FAVORITE ///////
 function addFavorite(e) {
 	let listItemLength = e.target.parentNode.parentNode.children[3].children.length
-	if (listItemLength === 10) return alert('You have reached the max amount of favorites!')
+	if (listItemLength === 15) return alert('You have reached the max amount of favorites!')
 
 	let drinkId = e.target.parentNode.parentNode.children[1][1][e.target.parentNode.parentNode.children[1][1].selectedIndex].value
 	let drinkLetter = e.target.parentNode.parentNode.children[1][0][e.target.parentNode.parentNode.children[1][0].selectedIndex].value
@@ -162,6 +162,26 @@ function addFavorite(e) {
 
 }
 
+/// LOAD THE FAVORITE TO DOM /////
+function addFavoriteItem(drinkObj) {
+	let { id, name, letter } = drinkObj
+	let favoriteLi = document.createElement('li')
+	favoriteLi.classList.add('favorite')
+	favoriteLi.setAttribute('id', id)
+	// for (let i = 0; i < favoritesBox.children.length; i++) {
+	// 	if (favoritesBox.children[i].firstChild.innerHTML === name) 
+	// 	return alert('You already added that drink!')
+	// }
+	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
+							<div class="button-container">
+								<button class="button" onClick="reloadDrink(${id}, '${letter}')">Load</button>
+								<button onClick='deleteFavorite(${id})'   class="delete-btn button"><strong>✘</strong></button>
+							</div>`	
+	
+	favoritesBox.appendChild(favoriteLi)
+}
+
+/////// DELETE FAVORITE ///////
 function deleteFavorite(drinkId) {
 	axios.delete(`${baseURL}/favorites/${drinkId}`)
         .then(response => {
@@ -179,26 +199,7 @@ function deleteFavorite(drinkId) {
 		})
 }
 
-function addFavoriteItem(drinkObj) {
-	let { id, name, letter } = drinkObj
-	let favoriteLi = document.createElement('li')
-	favoriteLi.classList.add('favorite')
-	favoriteLi.setAttribute('id', id)
-	// for (let i = 0; i < favoritesBox.children.length; i++) {
-	// 	if (favoritesBox.children[i].firstChild.innerHTML === name) 
-	// 	return alert('You already added that drink!')
-	// }
-	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
-							<div class="button-container">
-								<button class="button" onClick="reloadDrink(${id}, '${letter}')">Load</button>
-								<button onClick='deleteFavorite(${id})'   class="delete-btn button"><strong>✘</strong></button>
-							</div>`	
-	
-	favoritesBox.appendChild(favoriteLi)
-	
-}
-
-
+///// RELOADING FAVORITES ///////
 function loadFavorites() {
 	axios.get(`${baseURL}`)
 		.then(response => {
@@ -211,6 +212,7 @@ function loadFavorites() {
 		.catch(err => console.error(err))
 }
 
+///// LOAD DRINK CARD ON RELOAD BUTTON /////
 function reloadDrink(id, letter) {
 	console.log(id, letter)
 	axios.get(`${baseURL}/${letter}`).then(response => {
@@ -226,6 +228,7 @@ function reloadDrink(id, letter) {
 
 }
 
+////// GLOBAL LISTENERS ///////
 addFavoriteButton.addEventListener('click', addFavorite)
 	
 
