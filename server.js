@@ -7,7 +7,11 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static('client'))
 
+const controller = require('../cocktail-app/server/controller.js');
+const { getHomePage } = controller;
+
 ///Routes///
+app.get('/', getHomePage)
 require(`./server/routes.js`)(app)
 
 const port = process.env.PORT || 4000

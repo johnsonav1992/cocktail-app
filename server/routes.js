@@ -1,8 +1,7 @@
-const { getDrinksByLetter, addFavorite, deleteFavorite, getFavorites, getHomePage, getCSS, getJS } = require('./controller.js')
+const { getDrinksByLetter, addFavorite, deleteFavorite, getFavorites, getCSS, getJS } = require('./controller.js')
 const { seed } = require('./seedDb')
 
 module.exports = (app) => {
-    app.get('/', getHomePage)
     app.get('/css', getCSS)
     app.get('/js', getJS)
     app.post('/seed', seed)
