@@ -18,8 +18,8 @@ const GENERIC_COCKTAIL_URL =
 
 module.exports = {
     getHomePage: (req, res) => {
-        res.sendFile(path.join(__dirname, './client/index.html'))
-        console.log(path.join(__dirname, './client/index.html'))
+        res.sendFile(path.join(__dirname, '../client/index.html'))
+        console.log(path.join(__dirname, '../client/index.html'))
     },
 
     getCSS: (req, res) => {

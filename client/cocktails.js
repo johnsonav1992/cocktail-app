@@ -1,4 +1,4 @@
-const baseURL = `http://localhost:4000/drinks`
+const baseURL = `http://cocktail-central.herokuapp.com/drinks`
 
 //// GLOBAL SELECTORS /////
 let addFavoriteButton = document.querySelector('.add-favorite-btn')
