@@ -7,8 +7,8 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static('client'))
 
-const controller = require('./server/controller.js');
-const { getHomePage } = controller;
+
+const { getHomePage } = require('./server/controller.js');
 
 ///Routes///
 app.get('/', getHomePage)
