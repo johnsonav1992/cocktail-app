@@ -5,7 +5,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
-app.use(express.static('cocktail-app'))
+app.use(express.static(root))
 
 ///Routes///
 require(`./server/routes.js`)(app)
