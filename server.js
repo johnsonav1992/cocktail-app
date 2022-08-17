@@ -7,7 +7,7 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static('client'))
 
-const controller = require('../cocktail-app/server/controller.js');
+const controller = require('./server/controller.js');
 const { getHomePage } = controller;
 
 ///Routes///
