@@ -10,10 +10,12 @@ populateLettersDropdown()
 initDisplay() //initialize the drink to be displayed on first load
 getRandomCocktail()
 
-function initDisplay() {
-	axios.get(`drinks/m`)
-			.then(response => displayCocktail(response.data, 15))
-			.catch(err => console.log(err))
+async function initDisplay() {
+			try {
+				displayCocktail((await axios.get(`drinks/m`)).data, 15)
+			} catch (err) {  
+				console.log(err)
+			}
 }
 
 ////// DISPLAY COCKTAIL ////////
