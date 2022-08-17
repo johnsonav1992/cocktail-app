@@ -1,10 +1,10 @@
 const axios = require('axios')
 require('dotenv').config()
 const Sequelize = require('sequelize')
-const { CONNECTION_STRING } = process.env 
+const { DATABASE_URL } = process.env 
 const path = require('path')
     
-const sequelize = new Sequelize(CONNECTION_STRING, {
+const sequelize = new Sequelize(DATABASE_URL, {
     dialect: 'postgres',
     dialectOptions: {
         ssl: {
