@@ -8,11 +8,11 @@ let favoritesBox = document.querySelector('.favorites-box')
 loadFavorites()
 populateLettersDropdown()
 initDisplay() //initialize the drink to be displayed on first load
-// getRandomCocktail()
+getRandomCocktail()
 
 function initDisplay() {
 	axios.get(`${baseURL}/m`)
-			.then(response => displayCocktail(response.data, 4))
+			.then(response => displayCocktail(response.data, 15))
 			.catch(err => console.log(err))
 }
 
@@ -64,17 +64,17 @@ function displayCocktail(cocktail, index = 0) {
     
 }
 
-// ////// GET RANDOM COCKTAIL /////////
-// function getRandomCocktail() {
-// 	let randomButton = document.querySelector('.random-cocktail')
+////// GET RANDOM COCKTAIL /////////
+function getRandomCocktail() {
+	let randomButton = document.querySelector('.random-cocktail')
 
-// 	randomButton.addEventListener('click', () => {
-// 		axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
-// 			.then(response => displayCocktail(response.data))
-// 			.catch(err => console.log(err))
-// 	})
+	randomButton.addEventListener('click', () => {
+		axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
+			.then(response => displayCocktail(response.data))
+			.catch(err => console.log(err))
+	})
 	
-// }
+}
 
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {

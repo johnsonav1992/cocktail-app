@@ -2,6 +2,7 @@ const axios = require('axios')
 require('dotenv').config()
 const Sequelize = require('sequelize')
 const { CONNECTION_STRING } = process.env 
+const path = require('path')
     
 const sequelize = new Sequelize(CONNECTION_STRING, {
     dialect: 'postgres',
@@ -16,6 +17,18 @@ const GENERIC_COCKTAIL_URL =
 	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
 
 module.exports = {
+    getHomePage: (req, res) => {
+        res.sendFile(path.join(__dirname, '../index.html'))
+    },
+
+    getCSS: (req, res) => {
+        res.sendFile(path.join(__dirname, '../styles.css'))
+    },
+
+    getJS: (req, res) => {
+        res.sendFile(path.join(__dirname, '../cocktails.js'))
+    },
+
     getDrinksByLetter: (req, res) => {
         let { letter } = req.params
 
