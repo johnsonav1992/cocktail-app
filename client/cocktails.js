@@ -11,7 +11,7 @@ initDisplay() //initialize the drink to be displayed on first load
 getRandomCocktail()
 
 function initDisplay() {
-	axios.get(`/drinks/m`)
+	axios.get(`drinks/m`)
 			.then(response => displayCocktail(response.data, 15))
 			.catch(err => console.log(err))
 }
@@ -103,7 +103,7 @@ function populateDrinkDropdown(cocktails, letter) {
 			 object.idDrink == opt
 		)
 		
-		axios.get(`/drinks/${letter}`)
+		axios.get(`drinks/${letter}`)
 			.then(response => displayCocktail(response.data, index))
 			.catch(err => console.log(err))
 	})
@@ -122,7 +122,7 @@ function populateLettersDropdown() {
 
 	$('.letters-dropdown').change(e => {
 		let letter = e.target.value
-		axios.get(`/drinks/${letter}`).then(response => {
+		axios.get(`drinks/${letter}`).then(response => {
 			console.log(response)
 			populateDrinkDropdown(response.data, letter)
 		})	
@@ -150,7 +150,7 @@ function addFavorite(e) {
 
 	console.log(drinkObj)
 
-	axios.post(`/drinks/favorites`, drinkObj)
+	axios.post(`drinks/favorites`, drinkObj)
 		.then(response => {
 			let { data } = response
 			console.log(data)
@@ -183,7 +183,7 @@ function addFavoriteItem(drinkObj) {
 
 /////// DELETE FAVORITE ///////
 function deleteFavorite(drinkId) {
-	axios.delete(`/drinks/favorites/${drinkId}`)
+	axios.delete(`drinks/favorites/${drinkId}`)
         .then(response => {
 			let drink = response.data
 			console.log(response)
@@ -201,7 +201,7 @@ function deleteFavorite(drinkId) {
 
 ///// RELOADING FAVORITES ///////
 function loadFavorites() {
-	axios.get(`/drinks`)
+	axios.get(`drinks/`)
 		.then(response => {
 			console.log(response)
 			response.data.forEach(drink => {
@@ -215,12 +215,12 @@ function loadFavorites() {
 ///// LOAD DRINK CARD ON RELOAD BUTTON /////
 function reloadDrink(id, letter) {
 	console.log(id, letter)
-	axios.get(`/drinks/${letter}`).then(response => {
+	axios.get(`drinks/${letter}`).then(response => {
 		console.log(response)
 		let index = response.data.drinks.findIndex(object => 
 			object.idDrink == String(id))
 	   
-	   axios.get(`/drinks/${letter}`)
+	   axios.get(`drinks/${letter}`)
 		   .then(response => displayCocktail(response.data, index))
 		   .catch(err => console.log(err))
 	})	
