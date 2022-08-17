@@ -20,15 +20,7 @@ module.exports = {
     getHomePage: (req, res) => {
         res.sendFile(path.join(__dirname, '../client/index.html'))
     },
-
-    getCSS: (req, res) => {
-        res.sendFile(path.join(__dirname, '../styles.css'))
-    },
-
-    getJS: (req, res) => {
-        res.sendFile(path.join(__dirname, '../cocktails.js'))
-    },
-
+    
     getDrinksByLetter: (req, res) => {
         let { letter } = req.params
 
