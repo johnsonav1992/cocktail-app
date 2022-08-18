@@ -213,7 +213,8 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.dropdown {
+.dropdown,
+.input {
     border: none;
     background-color: hsl(217, 74%, 70%);
     border-radius: .5em;
@@ -242,7 +243,8 @@ body {
     max-width: 200px;
 }
 
-.select-drink-title {
+.select-drink-title,
+.search-drink-title {
     align-self: flex-start;
 }
 
@@ -251,8 +253,8 @@ body {
     align-items: center;
     gap: 1rem;
     max-width: 100%;
-    border-bottom: 1px solid #164795;
-    margin-bottom: 1rem;
+    border-top: 1px solid #164795;
+    margin-top: 1rem;
 }
 
 .favorites-box {

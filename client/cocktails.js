@@ -22,14 +22,18 @@ async function initDisplay() {
 function displayCocktail(cocktail, index = 0) {
     
 	let currentDrink = cocktail.drinks[index]
+	let { idDrink: id, strDrink: name, strDrinkThumb: picture, strGlass: glass, strInstructions: instructions } = currentDrink
+
+	let idHolder = document.querySelector('.id-holder')
+	idHolder.setAttribute('id', id)
 
 	////// DRINK CARD //////
 	let drinkName = document.querySelector('.drink-name')
-	drinkName.innerText = currentDrink.strDrink
+	drinkName.innerText = name
 
 	////// PICTURE //////
 	let pic = document.querySelector('.drink-image')
-	pic.src = `${currentDrink.strDrinkThumb}`
+	pic.src = `${picture}`
 
 	////// INGREDIENTS LIST //////
 	$('.ingredient').detach() // jQuery to remove the ingredients from the previous drink
@@ -57,12 +61,12 @@ function displayCocktail(cocktail, index = 0) {
 	}
 
 	////// GLASS //////
-    let glass = document.querySelector('.glass-name')
-	glass.innerText = `Glass: ${currentDrink.strGlass}`
+    let glassText = document.querySelector('.glass-name')
+	glassText.innerText = `Glass: ${glass}`
 
 	////// DIRECTIONS //////
 	let directionsCard = document.querySelector('.directions-card')
-	directionsCard.innerText = currentDrink.strInstructions
+	directionsCard.innerText = instructions
     
 }
 
