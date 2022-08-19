@@ -171,8 +171,8 @@ function populateLettersDropdown() {
 function addFavorite(e) {
 	let listItemLength =
 		e.target.parentNode.parentNode.children[3].children.length
-	if (listItemLength === 15)
-		return alert('You have reached the max amount of favorites!')
+	if (listItemLength === 10)
+		return alertUser('You have reached the max amount of favorites!')
 
 	let drinkId =
 		e.target.parentNode.parentNode.children[1][1][
