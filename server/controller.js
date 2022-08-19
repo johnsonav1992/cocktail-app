@@ -13,8 +13,14 @@ const sequelize = new Sequelize(DATABASE_URL, {
     }
 })
 
-const GENERIC_COCKTAIL_URL =
+const LETTER_COCKTAIL_URL =
 	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
+
+const ID_COCKTAIL_URL =
+    'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i='
+
+const NAME_COCKTAIL_URL =
+    `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=`
 
 module.exports = {
     getHomePage: (req, res) => {
@@ -24,7 +30,29 @@ module.exports = {
     getDrinksByLetter: (req, res) => {
         let { letter } = req.params
 
-        axios.get(`${GENERIC_COCKTAIL_URL}${letter}`)
+        axios.get(`${LETTER_COCKTAIL_URL}${letter}`)
+            .then(response => {
+            
+                res.status(200).send(response.data)
+            })
+            .catch(err => console.log(err))
+    },
+
+    getDrinkById: (req, res) => {
+        let { id } = req.params
+
+        axios.get(`${ID_COCKTAIL_URL}${id}`)
+            .then(response => {
+                res.status(200).send(response.data)
+            })
+            .catch(err => console.log(err))
+
+    },
+
+    searchDrinkByName: (req, res) => {
+        let { name } = req.params
+
+        axios.get(`${NAME_COCKTAIL_URL}${name}`)
             .then(response => {
                 res.status(200).send(response.data)
             })
