@@ -2,6 +2,9 @@
 let addFavoriteButton = document.querySelector('.add-favorite-btn')
 let favoritesBox = document.querySelector('.favorites-box')
 let searchForm = document.querySelector('.search-form')
+let alertModal = document.querySelector('.alert-wrapper')
+let alertMessage = document.querySelector('.modal-message')
+let closeButton = document.querySelector('.modal-close-btn')
 
 //// Invoke starter functions on window load
 loadFavorites()
@@ -95,7 +98,9 @@ function getDrinkByName(e) {
 	axios
 		.get(`/drinks/name/${name}`)
 		.then(response => {
-			if(response.data.drinks == null) return alert(`That drink doesn't exist or was spelled incorrectly. Please try again.`)
+			if(response.data.drinks == null) {
+				return alertUser('That drink does not exist or was spelled incorrectly. Please try again')
+			}
 			displayCocktail(response.data)
 		})
 		.catch(err => console.log(err))
@@ -277,7 +282,16 @@ function reloadDrink(id, letter) {
 	})
 }
 
+function alertUser(message) {
+	alertMessage.innerText = message
+	alertModal.classList.remove('hide')
+}
+
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.addEventListener('click', addFavorite)
 searchForm.addEventListener('submit', getDrinkByName)
+closeButton.addEventListener('click', () => {
+	alertMessage.innerText = ''
+	alertModal.classList.add('hide')
+})
 

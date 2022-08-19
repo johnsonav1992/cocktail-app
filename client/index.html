@@ -48,7 +48,9 @@
 					<div class="directions-card">
 						Make this cocktail, please!
 					</div>
-					<button class="random-cocktail button">Get Random Cocktail !</button>
+					<button class="random-cocktail button">
+						Get Random Cocktail !
+					</button>
 				</div>
 				<div class="id-holder"></div>
 			</section>
@@ -74,7 +76,26 @@
 					Search Drink by Name
 				</h2>
 				<form class="search-form drinks-form">
-					<input class="input" type="text" placeholder="Enter Drink Name">
+					<input
+						class="input"
+						type="text"
+						placeholder="Enter Drink Name"
+					/>
+					<button class="search-btn button">Search</button>
+				</form>
+				<h2 class="search-drink-title list-title">
+					Search Drinks by Ingredient
+				</h2>
+				<form class="search-form drinks-form">
+					<input
+						class="input"
+						type="text"
+						placeholder="Enter Ingredient Name"
+					/>
+					<select
+						name="ingredients"
+						class="ingredients-dropdown dropdown"
+					></select>
 					<button class="search-btn button">Search</button>
 				</form>
 				<div class="favorites-title-wrapper">
@@ -85,10 +106,16 @@
 						Add to Favorites
 					</button>
 				</div>
-                <div class="favorites-box">
-
-                </div>
+				<div class="favorites-box"></div>
 			</section>
 		</main>
+		<div class="alert-wrapper hide">
+			<div class="alert-bg"></div>
+			<div class="alert-modal">
+				<h1>Sorry!</h1>
+				<p class="modal-message">Test message</p>
+				<button class="button modal-close-btn">OK</button>
+			</div>
+		</div>
 	</body>
 </html>
