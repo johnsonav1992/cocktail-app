@@ -223,6 +223,7 @@ function addFavoriteItem(drinkObj) {
 							</div>`
 
 	favoritesBox.appendChild(favoriteLi)
+	
 }
 
 /////// DELETE FAVORITE ///////
@@ -254,7 +255,7 @@ function deleteFavorite(drinkId) {
 ///// LOAD FAVORITES ON WINDOW ONLOAD ///////
 function loadFavorites() {
 	axios
-		.get(`/drinks/`)
+		.get(`/drinks`)
 		.then(response => {
 			console.log(response)
 			response.data.forEach(drink => {
@@ -275,7 +276,7 @@ function reloadDrink(id, letter) {
 		)
 
 		axios
-			.get(`/drinks/${letter}`)
+			.get(`/drinks/letter/${letter}`)
 			.then(response => displayCocktail(response.data, index))
 			.catch(err => console.log(err))
 	})

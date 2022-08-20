@@ -2,7 +2,7 @@ const { getDrinksByLetter, addFavorite, deleteFavorite, getFavorites, getHomePag
 const { seed } = require('./seedDb')
 
 module.exports = (app) => {
-    app.get('/drinks/letter/:letter', getDrinksByLetter)
+    app.get('/drinks/:letter', getDrinksByLetter)
     app.get('/drinks/id/:id', getDrinkById)
     app.get('/drinks/name/:name', searchDrinkByName)
     app.get('/drinks', getFavorites)
