@@ -99,6 +99,23 @@ body {
 .options-box {
     min-width: 500px;
     align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.options-bg {
+    position: absolute;
+    top: 32%;
+    left: 8%;
+    width: 100%;
+    height: 100%;
+    background-image: url('./images/martini-glass-transparent-background-21.png');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: .15;
+    z-index: -1;
 }
 
 .drink-name {
@@ -269,7 +286,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    overflow-y: scroll;
+    min-height: 400px;
+    max-height: 400px;
+    overflow: scroll;
 }
 
 .favorite {
@@ -283,6 +302,7 @@ body {
     padding: 0rem .5rem;
     margin: 0;
     border-radius: .5em;
+    transition: all 700ms ease;
 }
 
 .favorite-li {
@@ -295,6 +315,11 @@ body {
     color: #164795;
     font-family: 'Raleway', sans-serif;
     list-style-type: none;
+}
+
+.fall { 
+    transform: translateY(8rem) rotateZ(15deg);
+    opacity: 0;
 }
 
 .button-container {

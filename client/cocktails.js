@@ -99,7 +99,7 @@ function getDrinkByName(e) {
 		.get(`/drinks/name/${name}`)
 		.then(response => {
 			if(response.data.drinks == null) {
-				return alertUser('That drink does not exist or was spelled incorrectly. Please try again')
+				return alertUser('That drink does not exist or was spelled incorrectly. Please try again!')
 			}
 			displayCocktail(response.data)
 		})
@@ -170,22 +170,17 @@ function populateLettersDropdown() {
 /////// ADD FAVORITE TO DB///////
 function addFavorite(e) {
 	let listItemLength =
-		e.target.parentNode.parentNode.children[3].children.length
-	if (listItemLength === 10)
+		e.target.parentNode.parentNode.children[7].children.length
+		console.log(listItemLength)
+	if (listItemLength >= 10)
 		return alertUser('You have reached the max amount of favorites!')
 
 	let drinkId =
-		e.target.parentNode.parentNode.children[1][1][
-			e.target.parentNode.parentNode.children[1][1].selectedIndex
-		].value
+		e.target.parentNode.parentNode.parentNode.children[1].children[2].id
 	let drinkLetter =
-		e.target.parentNode.parentNode.children[1][0][
-			e.target.parentNode.parentNode.children[1][0].selectedIndex
-		].value
+	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML.charAt(0).toLowerCase()
 	let drinkName =
-		e.target.parentNode.parentNode.children[1][1][
-			e.target.parentNode.parentNode.children[1][1].selectedIndex
-		].innerHTML
+	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML
 
 	console.log(`%c ID: ${drinkId}`, `color: red;`)
 	console.log(`%c Letter: ${drinkLetter}`, `color: aquamarine;`)
@@ -236,14 +231,18 @@ function deleteFavorite(drinkId) {
 		.delete(`/drinks/favorites/${drinkId}`)
 		.then(response => {
 			let drink = response.data
-			console.log(response)
 
 			for (let i = 0; i < favoritesBox.children.length; i++) {
+				let drinkToDelete = favoritesBox.children[i]
 				if (
-					favoritesBox.children[i].getAttribute('id') ===
+					drinkToDelete.getAttribute('id') ===
 					String(drink.drinkId)
 				) {
-					favoritesBox.children[i].remove()
+					favoritesBox.children[i].classList.add('fall')
+					favoritesBox.children[i].addEventListener('transitionend', () => {
+						drinkToDelete.remove()
+					})
+					
 				}
 			}
 		})
