@@ -88,32 +88,33 @@ function getRandomCocktail() {
 function getDrinkByName(e) {
 	e.preventDefault()
 	let name = e.target[0].value
-	
+
 	axios
 		.get(`/drinks/name/${name}`)
 		.then(response => {
-			if(response.data.drinks == null) {
-				return alertUser('That drink does not exist or was spelled incorrectly. Please try again!')
+			if (response.data.drinks == null) {
+				return alertUser(
+					'That drink does not exist or was spelled incorrectly. Please try again!'
+				)
 			}
 			displayCocktail(response.data)
 		})
 		.catch(err => console.log(err))
-		
+
 	e.target[0].value = ''
 }
 
 ////// GET DRINK BY INGREDIENT //////
 function getDrinkByIngredient(e) {
 	e.preventDefault()
-    let ingredient = e.target.value
-    
-    axios
-        .get(`/drinks/ingredient/${ingredient}`)
+	let ingredient = e.target.value
+
+	axios
+		.get(`/drinks/ingredient/${ingredient}`)
 		.then(response => {
 			populateIngredientsDropDown(response.data)
 		})
 		.catch(err => console.log(err))
-        
 }
 
 /////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
@@ -138,7 +139,6 @@ function populateIngredientsDropDown(cocktails) {
 		getDrinkById(id)
 	})
 }
-    
 
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
@@ -171,10 +171,11 @@ function populateDrinkDropdown(cocktails, letter) {
 ////// POPULATE LETTERS DROPDOWN ////////
 function populateLettersDropdown() {
 	let alpha = [
-		'A','B','C','D','E','F','G','H',
-		'I','J','K','L','M','N','O','P',
-		'Q','R','S','T','U','V','W','X',
-		'Y','Z'
+		'A','B','C','D','E','F',
+		'G','H','I','J','K','L',
+		'M','N','O','P','Q','R',
+		'S','T','U','V','W','X',
+		'Y','Z',
 	]
 
 	let lettersDropdown = document.querySelector('.letters-dropdown')
@@ -188,8 +189,7 @@ function populateLettersDropdown() {
 
 	$('.letters-dropdown').on('change', e => {
 		let letter = e.target.value
-		axios.get(`/drinks/letter/${letter}`)
-			.then(response => {
+		axios.get(`/drinks/letter/${letter}`).then(response => {
 			console.log(response)
 			populateDrinkDropdown(response.data, letter)
 		})
@@ -200,13 +200,13 @@ function populateLettersDropdown() {
 function addFavorite(e) {
 	let listItemLength =
 		e.target.parentNode.parentNode.children[7].children.length
-		console.log(listItemLength)
+	console.log(listItemLength)
 	let id = $('.id-holder').attr('id')
 
 	for (let i = 0; i < favoritesBox.children.length; i++) {
-			if (Number(favoritesBox.children[i].getAttribute('id')) === +id)
+		if (Number(favoritesBox.children[i].getAttribute('id')) === +id)
 			return alertUser(`You've already added that drink!`)
-		}
+	}
 
 	if (listItemLength >= 10)
 		return alertUser('You have reached the max amount of favorites!')
@@ -214,9 +214,12 @@ function addFavorite(e) {
 	let drinkId =
 		e.target.parentNode.parentNode.parentNode.children[1].children[2].id
 	let drinkLetter =
-		e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML.charAt(0).toLowerCase()
-	let drinkName =
 		e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML
+			.charAt(0)
+			.toLowerCase()
+	let drinkName =
+		e.target.parentNode.parentNode.parentNode.children[1].children[0]
+			.innerHTML
 
 	let drinkObj = {
 		id: drinkId,
@@ -237,7 +240,6 @@ function addFavorite(e) {
 
 /// LOAD THE FAVORITE TO DOM /////
 function addFavoriteItem(drinkObj) {
-	
 	let { id, name, letter } = drinkObj
 	let favoriteLi = document.createElement('li')
 	favoriteLi.classList.add('favorite')
@@ -262,13 +264,15 @@ function deleteFavorite(drinkId) {
 			for (let i = 0; i < favoritesBox.children.length; i++) {
 				let drinkToDelete = favoritesBox.children[i]
 				if (
-					drinkToDelete.getAttribute('id') ===
-					String(drink.drinkId)
+					drinkToDelete.getAttribute('id') === String(drink.drinkId)
 				) {
 					favoritesBox.children[i].classList.add('fall')
-					favoritesBox.children[i].addEventListener('transitionend', () => {
-						drinkToDelete.remove()
-					})
+					favoritesBox.children[i].addEventListener(
+						'transitionend',
+						() => {
+							drinkToDelete.remove()
+						}
+					)
 				}
 			}
 		})
@@ -293,11 +297,11 @@ function loadFavorites() {
 ///// GET DRINK By ID //////
 function getDrinkById(id) {
 	axios
-        .get(`/drinks/id/${id}`)
-        .then(response => {
-            displayCocktail(response.data)
-        })
-        .catch(err => console.log(err))
+		.get(`/drinks/id/${id}`)
+		.then(response => {
+			displayCocktail(response.data)
+		})
+		.catch(err => console.log(err))
 }
 
 ///// ALERT FUNCTION /////
@@ -314,4 +318,3 @@ closeButton.addEventListener('click', () => {
 	alertMessage.innerText = ''
 	alertModal.classList.add('hide')
 })
-
