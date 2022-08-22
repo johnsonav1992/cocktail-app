@@ -43,7 +43,7 @@ function displayCocktail(cocktail, index = 0) {
 
 	// Ingredients List
 	$('.ingredient').detach() //remove the ingredients from previous drink
-	$('.list-title').text('Ingredients')
+	$('.ingredients-title').text('Ingredients')
 	let numOfIngredients = 15
 
 	for (let i = 1; i <= numOfIngredients; i++) {
