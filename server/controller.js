@@ -16,11 +16,14 @@ const sequelize = new Sequelize(DATABASE_URL, {
 const LETTER_COCKTAIL_URL =
 	'https://www.thecocktaildb.com/api/json/v1/1/search.php?f='
 
-const ID_COCKTAIL_URL =
-    'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i='
+const INGREDIENT_COCKTAIL_URL =
+    'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i='
 
 const NAME_COCKTAIL_URL =
     `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=`
+
+const ID_COCKTAIL_URL =
+    `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=`
 
 module.exports = {
     getHomePage: (req, res) => {
@@ -38,11 +41,12 @@ module.exports = {
             .catch(err => console.log(err))
     },
 
-    getDrinkById: (req, res) => {
-        let { id } = req.params
+    getDrinkByIngredient: (req, res) => {
+        let { ingredient } = req.params
 
-        axios.get(`${ID_COCKTAIL_URL}${id}`)
+        axios.get(`${INGREDIENT_COCKTAIL_URL}${ingredient}`)
             .then(response => {
+                console.log(response.data)
                 res.status(200).send(response.data)
             })
             .catch(err => console.log(err))
@@ -53,6 +57,16 @@ module.exports = {
         let { name } = req.params
 
         axios.get(`${NAME_COCKTAIL_URL}${name}`)
+            .then(response => {
+                res.status(200).send(response.data)
+            })
+            .catch(err => console.log(err))
+    },
+
+    getDrinkById: (req, res) => {
+        let { id } = req.params
+
+        axios.get(`${ID_COCKTAIL_URL}${id}`)
             .then(response => {
                 res.status(200).send(response.data)
             })

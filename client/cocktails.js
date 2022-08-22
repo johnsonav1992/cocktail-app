@@ -5,6 +5,7 @@ let searchForm = document.querySelector('.search-form')
 let alertModal = document.querySelector('.alert-wrapper')
 let alertMessage = document.querySelector('.modal-message')
 let closeButton = document.querySelector('.modal-close-btn')
+let ingredientInput = document.querySelector('.ingredient-input')
 
 //// Invoke starter functions on window load
 loadFavorites()
@@ -22,7 +23,7 @@ async function initDisplay() {
 
 ////// DISPLAY COCKTAIL ////////
 function displayCocktail(cocktail, index = 0) {
-	console.log(cocktail)
+	// console.log(cocktail)
 	let currentDrink = cocktail.drinks[index]
 	let {
 		idDrink: id,
@@ -108,6 +109,48 @@ function getDrinkByName(e) {
 	e.target[0].value = ''
 }
 
+////// GET DRINK BY INGREDIENT //////
+function getDrinkByIngredient(e) {
+	e.preventDefault()
+    let ingredient = e.target.value
+    
+    axios
+        .get(`/drinks/ingredient/${ingredient}`)
+		.then(response => {
+			populateIngredientsDropDown(response.data)
+		})
+		.catch(err => console.log(err))
+        
+}
+
+/////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
+function populateIngredientsDropDown(cocktails) {
+	$('.option').detach() //jQuery to remove old options before repopulating
+
+	for (let i = 0; i < cocktails.drinks.length; i++) {
+		let select = document.querySelector('.ingredients-dropdown')
+		let option = document.createElement('option')
+		option.classList.add('option')
+		option.text = cocktails.drinks[i].strDrink
+		option.value = cocktails.drinks[i].idDrink
+		select.appendChild(option)
+	}
+
+	let ingredientsForm = document.querySelector('.ingredients-form')
+	console.log(ingredientsForm)
+	ingredientsForm.addEventListener('submit', e => {
+		e.preventDefault()
+		console.log(e.target)
+
+		let select = e.target[1]
+		let id = select.options[select.selectedIndex].value
+		console.log('id: ', id)
+
+		getDrinkById(id)
+	})
+}
+    
+
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
 	$('.option').detach() //jQuery to remove old options before repopulating
@@ -181,15 +224,19 @@ function addFavorite(e) {
 	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML.charAt(0).toLowerCase()
 	let drinkName =
 	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML
+	// let imgSrc = String(e.target.parentNode.parentNode.parentNode.children[1].children[1].children[0].src)
+
 
 	console.log(`%c ID: ${drinkId}`, `color: red;`)
 	console.log(`%c Letter: ${drinkLetter}`, `color: aquamarine;`)
 	console.log(`%c Name: ${drinkName}`, `color: lightyellow;`)
+	// console.log(imgSrc)
 
 	let drinkObj = {
 		id: drinkId,
 		name: drinkName,
 		letter: drinkLetter,
+		// pic: imgSrc
 	}
 
 	console.log(drinkObj)
@@ -208,7 +255,7 @@ function addFavorite(e) {
 
 /// LOAD THE FAVORITE TO DOM /////
 function addFavoriteItem(drinkObj) {
-	let { id, name, letter } = drinkObj
+	let { id, name, letter, pic } = drinkObj
 	let favoriteLi = document.createElement('li')
 	favoriteLi.classList.add('favorite')
 	favoriteLi.setAttribute('id', id)
@@ -216,12 +263,12 @@ function addFavoriteItem(drinkObj) {
 	// 	if (favoritesBox.children[i].firstChild.innerHTML === name)
 	// 	return alert('You already added that drink!')
 	// }
-	favoriteLi.innerHTML = `<h3 class="fave-name">${name}</h3>
+	favoriteLi.innerHTML = `
+							<h3 class="fave-name">${name}</h3>
 							<div class="button-container">
 								<button class="button" onClick="reloadDrink(${id}, '${letter}')">Load</button>
 								<button onClick='deleteFavorite(${id})' class="delete-btn button"><strong>✘</strong></button>
 							</div>`
-
 	favoritesBox.appendChild(favoriteLi)
 	
 }
@@ -257,7 +304,7 @@ function loadFavorites() {
 	axios
 		.get(`/drinks`)
 		.then(response => {
-			console.log(response)
+			// console.log(response)
 			response.data.forEach(drink => {
 				console.log(drink)
 				addFavoriteItem(drink)
@@ -266,20 +313,19 @@ function loadFavorites() {
 		.catch(err => console.error(err))
 }
 
-///// LOAD DRINK CARD ON RELOAD BUTTON /////
-function reloadDrink(id, letter) {
-	console.log(id, letter)
-	axios.get(`/drinks/letter/${letter}`).then(response => {
-		console.log(response)
-		let index = response.data.drinks.findIndex(
-			object => object.idDrink == String(id)
-		)
+///// GET DRINK By ID //////
+function getDrinkById(id) {
+	axios
+        .get(`/drinks/id/${id}`)
+        .then(response => {
+            displayCocktail(response.data)
+        })
+        .catch(err => console.log(err))
+}
 
-		axios
-			.get(`/drinks/letter/${letter}`)
-			.then(response => displayCocktail(response.data, index))
-			.catch(err => console.log(err))
-	})
+///// LOAD DRINK CARD ON RELOAD BUTTON /////
+function reloadDrink(id) {
+	getDrinkById(id)
 }
 
 function alertUser(message) {
@@ -290,6 +336,7 @@ function alertUser(message) {
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.addEventListener('click', addFavorite)
 searchForm.addEventListener('submit', getDrinkByName)
+ingredientInput.addEventListener('change', getDrinkByIngredient)
 closeButton.addEventListener('click', () => {
 	alertMessage.innerText = ''
 	alertModal.classList.add('hide')
