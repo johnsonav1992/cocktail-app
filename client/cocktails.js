@@ -33,22 +33,17 @@ function displayCocktail(cocktail, index = 0) {
 		strInstructions: instructions,
 	} = currentDrink
 
-	let idHolder = document.querySelector('.id-holder')
-	idHolder.setAttribute('id', id)
+	$('.id-holder').attr('id', id)
 
 	// Drink card
-	let drinkName = document.querySelector('.drink-name')
-	drinkName.innerText = name
+	$('.drink-name').text(name)
 
 	// Picture
-	let pic = document.querySelector('.drink-image')
-	pic.src = `${picture}`
+	$('.drink-image').attr('src', picture)
 
 	// Ingredients List
-	$('.ingredient').detach() // jQuery to remove the ingredients from the previous drink
-	let ingredientsList = document.querySelector('.ingredients-list')
-	let ingredientsListTitle = document.querySelector('.list-title')
-	ingredientsListTitle.innerHTML = 'Ingredients'
+	$('.ingredient').detach() //remove the ingredients from previous drink
+	$('.list-title').text('Ingredients')
 	let numOfIngredients = 15
 
 	for (let i = 1; i <= numOfIngredients; i++) {
@@ -67,16 +62,14 @@ function displayCocktail(cocktail, index = 0) {
 			currentDrink[[`strIngredient${i}`]]
 		}`
 		ingredient.classList.add('ingredient')
-		ingredientsList.append(ingredient)
+		$('.ingredients-list').append(ingredient)
 	}
 
 	// Glass
-	let glassText = document.querySelector('.glass-name')
-	glassText.innerText = `Glass: ${glass}`
+	$('.glass-name').text(`Glass: ${glass}`)
 
 	// Directions
-	let directionsCard = document.querySelector('.directions-card')
-	directionsCard.innerText = instructions
+	$('.directions-card').text(instructions)
 }
 
 ////// GET RANDOM COCKTAIL /////////
@@ -125,7 +118,7 @@ function getDrinkByIngredient(e) {
 
 /////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
 function populateIngredientsDropDown(cocktails) {
-	$('.option').detach() //jQuery to remove old options before repopulating
+	$('.option').detach() //remove old options before repopulating
 
 	for (let i = 0; i < cocktails.drinks.length; i++) {
 		let select = document.querySelector('.ingredients-dropdown')
@@ -137,14 +130,10 @@ function populateIngredientsDropDown(cocktails) {
 	}
 
 	let ingredientsForm = document.querySelector('.ingredients-form')
-	console.log(ingredientsForm)
 	ingredientsForm.addEventListener('submit', e => {
 		e.preventDefault()
-		console.log(e.target)
-
 		let select = e.target[1]
 		let id = select.options[select.selectedIndex].value
-		console.log('id: ', id)
 
 		getDrinkById(id)
 	})
@@ -153,7 +142,7 @@ function populateIngredientsDropDown(cocktails) {
 
 ////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown(cocktails, letter) {
-	$('.option').detach() //jQuery to remove old options before repopulating
+	$('.option').detach() //remove old options before repopulating
 
 	for (let i = 0; i < cocktails.drinks.length; i++) {
 		let select = document.querySelector('.drink-dropdown')
@@ -167,11 +156,8 @@ function populateDrinkDropdown(cocktails, letter) {
 	let form = document.querySelector('.drinks-form')
 	form.addEventListener('submit', e => {
 		e.preventDefault()
-		console.log(e)
-
 		let select = e.target[1]
 		let opt = select.options[select.selectedIndex].value
-		console.log(opt)
 
 		let index = cocktails.drinks.findIndex(object => object.idDrink == opt)
 
@@ -200,7 +186,7 @@ function populateLettersDropdown() {
 		)
 	}
 
-	$('.letters-dropdown').change(e => {
+	$('.letters-dropdown').on('change', e => {
 		let letter = e.target.value
 		axios.get(`/drinks/letter/${letter}`)
 			.then(response => {
@@ -215,37 +201,33 @@ function addFavorite(e) {
 	let listItemLength =
 		e.target.parentNode.parentNode.children[7].children.length
 		console.log(listItemLength)
+	let id = $('.id-holder').attr('id')
+
+	for (let i = 0; i < favoritesBox.children.length; i++) {
+			if (Number(favoritesBox.children[i].getAttribute('id')) === +id)
+			return alertUser(`You've already added that drink!`)
+		}
+
 	if (listItemLength >= 10)
 		return alertUser('You have reached the max amount of favorites!')
 
 	let drinkId =
 		e.target.parentNode.parentNode.parentNode.children[1].children[2].id
 	let drinkLetter =
-	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML.charAt(0).toLowerCase()
+		e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML.charAt(0).toLowerCase()
 	let drinkName =
-	e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML
-	// let imgSrc = String(e.target.parentNode.parentNode.parentNode.children[1].children[1].children[0].src)
-
-
-	console.log(`%c ID: ${drinkId}`, `color: red;`)
-	console.log(`%c Letter: ${drinkLetter}`, `color: aquamarine;`)
-	console.log(`%c Name: ${drinkName}`, `color: lightyellow;`)
-	// console.log(imgSrc)
+		e.target.parentNode.parentNode.parentNode.children[1].children[0].innerHTML
 
 	let drinkObj = {
 		id: drinkId,
 		name: drinkName,
 		letter: drinkLetter,
-		// pic: imgSrc
 	}
-
-	console.log(drinkObj)
 
 	axios
 		.post(`/drinks/favorites`, drinkObj)
 		.then(response => {
 			let { data } = response
-			console.log(data)
 			addFavoriteItem(data)
 		})
 		.catch(error => {
@@ -255,22 +237,19 @@ function addFavorite(e) {
 
 /// LOAD THE FAVORITE TO DOM /////
 function addFavoriteItem(drinkObj) {
-	let { id, name, letter, pic } = drinkObj
+	
+	let { id, name, letter } = drinkObj
 	let favoriteLi = document.createElement('li')
 	favoriteLi.classList.add('favorite')
 	favoriteLi.setAttribute('id', id)
-	// for (let i = 0; i < favoritesBox.children.length; i++) {
-	// 	if (favoritesBox.children[i].firstChild.innerHTML === name)
-	// 	return alert('You already added that drink!')
-	// }
+
 	favoriteLi.innerHTML = `
 							<h3 class="fave-name">${name}</h3>
 							<div class="button-container">
-								<button class="button" onClick="reloadDrink(${id}, '${letter}')">Load</button>
+								<button class="button" onClick="getDrinkById(${id})">Load</button>
 								<button onClick='deleteFavorite(${id})' class="delete-btn button"><strong>✘</strong></button>
 							</div>`
 	favoritesBox.appendChild(favoriteLi)
-	
 }
 
 /////// DELETE FAVORITE ///////
@@ -290,7 +269,6 @@ function deleteFavorite(drinkId) {
 					favoritesBox.children[i].addEventListener('transitionend', () => {
 						drinkToDelete.remove()
 					})
-					
 				}
 			}
 		})
@@ -306,7 +284,6 @@ function loadFavorites() {
 		.then(response => {
 			// console.log(response)
 			response.data.forEach(drink => {
-				console.log(drink)
 				addFavoriteItem(drink)
 			})
 		})
@@ -323,11 +300,7 @@ function getDrinkById(id) {
         .catch(err => console.log(err))
 }
 
-///// LOAD DRINK CARD ON RELOAD BUTTON /////
-function reloadDrink(id) {
-	getDrinkById(id)
-}
-
+///// ALERT FUNCTION /////
 function alertUser(message) {
 	alertMessage.innerText = message
 	alertModal.classList.remove('hide')

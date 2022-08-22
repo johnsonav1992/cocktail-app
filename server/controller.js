@@ -35,7 +35,6 @@ module.exports = {
 
         axios.get(`${LETTER_COCKTAIL_URL}${letter}`)
             .then(response => {
-            
                 res.status(200).send(response.data)
             })
             .catch(err => console.log(err))
@@ -46,7 +45,6 @@ module.exports = {
 
         axios.get(`${INGREDIENT_COCKTAIL_URL}${ingredient}`)
             .then(response => {
-                console.log(response.data)
                 res.status(200).send(response.data)
             })
             .catch(err => console.log(err))
