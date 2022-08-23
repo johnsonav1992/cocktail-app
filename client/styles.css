@@ -22,8 +22,8 @@ body {
 
 .grid-container {
     display: grid;
-    grid-template-columns: 1;
-    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 2rem;
     column-gap: 8rem;
     margin-left: 8rem;
@@ -31,13 +31,8 @@ body {
     margin-bottom: 5rem;
 }
 
-@media (min-width: 1200px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .header {
-        grid-column: span 2;
-    }
+.header {
+    
 }
 
 .header a {
@@ -94,6 +89,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 350px;
     max-width: 500px;
     padding: 2.5rem;
     margin-bottom: 20px;
@@ -107,14 +103,11 @@ body {
 
 .drink-card {
     padding-top: 1rem;
-    min-width: 400px;
 }
 
 .options-box {
-    min-width: 500px;
     align-items: flex-start;
     position: relative;
-    overflow: hidden;
     z-index: 1;
 }
 
@@ -386,4 +379,23 @@ body {
 
 .hide {
     display: none;
+}
+
+@media (max-width: 728px) {
+    body {
+        
+    }
+
+    form {
+        flex-direction: column;
+    }
+
+    .search-btn,
+    .load-drink-btn,
+    .options-box,
+    select {
+        align-self: flex-start;
+    }
+
+
 }
