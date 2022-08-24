@@ -103,10 +103,6 @@ body {
     border-radius: 2.5em;
 }
 
-/* .drink-card {
-    padding-top: 1rem;
-} */
-
 .options-box {
     align-items: flex-start;
     position: relative;
@@ -382,6 +378,20 @@ body {
 
 .hide {
     display: none;
+}
+
+.copyright {
+    text-align: center;
+    color: #164795;
+    text-shadow: 1px 1px 5px gray;
+    font-family: 'Raleway', sans-serif;
+    padding: 1rem;
+    padding-bottom: 2rem;
+}
+
+.copyright a {
+    text-decoration: none;
+    color: #164795;
 }
 
 @media (max-width: 800px) {
