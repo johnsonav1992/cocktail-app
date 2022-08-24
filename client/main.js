@@ -313,7 +313,7 @@ function alertUser(message) {
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.addEventListener('click', addFavorite)
 searchForm.addEventListener('submit', getDrinkByName)
-ingredientInput.addEventListener('change', getDrinkByIngredient)
+ingredientInput.addEventListener('keyup', getDrinkByIngredient)
 closeButton.addEventListener('click', () => {
 	alertMessage.innerText = ''
 	alertModal.classList.add('hide')
