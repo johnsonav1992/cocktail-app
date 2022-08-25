@@ -22,7 +22,6 @@ body {
 
 .grid-container {
     display: grid;
-    align-items: center;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     column-gap: 8rem;
@@ -112,14 +111,14 @@ body {
 
 .options-bg {
     position: absolute;
-    top: 32%;
-    left: 8%;
+    top: 20%;
+    left: 15;
     width: 100%;
     height: 100%;
     background-image: url('./images/martini-glass-transparent-background-21.png');
     background-position: left;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 150%;
     opacity: .15;
     z-index: -1;
 }
@@ -196,13 +195,11 @@ body {
 }
 
 .directions-card {
-    height: auto;
     width: minmax(85%, 85%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: auto;
     min-width: 50%;
     padding: 1rem;
     background: linear-gradient(.25turn, hsl(217, 74%, 70%), 30%, hsl(15, 38%, 70%));
@@ -211,6 +208,7 @@ body {
     font-weight: bold;
     font-size: .8rem;
     font-family: sans-serif;
+    overflow-y: scroll;
 }
 
 .button {
