@@ -209,6 +209,11 @@ body {
     font-size: .8rem;
     font-family: sans-serif;
     overflow-y: scroll;
+    overflow: -moz-scrollbars-none;
+}
+
+.directions-card::-webkit-scrollbar {
+    display: none;
 }
 
 .button {
@@ -295,6 +300,11 @@ body {
     min-height: 400px;
     max-height: 400px;
     overflow: scroll;
+    overflow: -moz-scrollbars-none;
+}
+
+.favorites-box::-webkit-scrollbar {
+    display: none;
 }
 
 .favorite {
