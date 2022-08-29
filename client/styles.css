@@ -402,7 +402,7 @@ body {
     color: #164795;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1300px) {
     form {
         flex-direction: column;
     }
@@ -419,6 +419,9 @@ body {
     .dropdown {
         width: 200px;
     }
+}
+
+@media (max-width: 700px) {
 
     .title-box {
         flex-direction: column;
@@ -438,7 +441,7 @@ body {
     }
 
     .grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(1, minmax(200px, 1fr));
         width: 90%
     }
 
