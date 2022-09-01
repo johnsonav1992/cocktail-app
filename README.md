@@ -18,7 +18,7 @@ Features inluded in Cocktail Central Include:
 ## Usage
 
 To use Cocktail Central, visit www.cocktail-central.herokuapp.com OR clone this github repository, in terminal run 'npm i' 
-to install dependencies, then run 'nom start' to start the server. Visit localhost:4000 to view the application after server start. 
+to install dependencies, then run 'npm start' to start the server. Visit localhost:4000 to view the application after server start. 
 
 
 ## Screenshots
