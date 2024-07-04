@@ -5,6 +5,9 @@ Users can use this app to search for and save drink recipes for personal use.
 
 This app was create with JavaScript, HTML, CSS, Axios, Express, Node.js, PostgreSQL, and JQuery. 
 
+original build: September 2022
+migration to TS + refactor - July 2024
+
 ## Features
 
 Features inluded in Cocktail Central Include:
