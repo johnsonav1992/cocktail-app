@@ -99,23 +99,23 @@ function getRandomCocktail () {
 }
 
 ////// GET DRINK BY NAME //////
-function getDrinkByName ( e: any ) {
+function getDrinkByName ( e: SubmitEvent ) {
     e.preventDefault();
-    const name = e.target[ 0 ].value;
+    const nameInput = ( e.target as HTMLFormElement )[ 0 ] as HTMLInputElement;
 
     axios
-        .get( `/drinks/name/${ name }` )
+        .get<SingleDrinkRes>( `/drinks/name/${ nameInput.value }` )
         .then( response => {
             if ( response.data.drinks == null ) {
                 return alertUser(
                     'That drink does not exist or was spelled incorrectly. Please try again!'
                 );
             }
-            displayCocktail( response.data );
+            displayCocktail( response.data.drinks );
         } )
         .catch( err => console.log( err ) );
 
-    e.target[ 0 ].value = '';
+    nameInput.value = '';
 }
 
 ////// GET DRINK BY INGREDIENT //////
