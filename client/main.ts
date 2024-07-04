@@ -1,6 +1,6 @@
 import type {
     Drink
-    , DrinksRes
+    , DrinkFavorite, DrinksRes
     , SingleDrinkRes
 } from '../types/types.ts';
 declare const axios: import( 'axios' ).AxiosStatic;
@@ -172,11 +172,11 @@ function populateDrinkDropdown ( drinks: Drink[], letter: string ) {
 
     const onSubmit = ( e: SubmitEvent ) => {
         e.preventDefault();
-        console.log( 'SUBMIT' );
+
         const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
         const opt = select.options[ select.selectedIndex ]?.value;
 
-        const index = drinks.findIndex( ( object: any ) => object.idDrink == opt );
+        const index = drinks.findIndex( drink => drink.idDrink == opt );
         const drink = drinks[ index ];
 
         if ( drink ) displayCocktail( drink );
@@ -241,14 +241,14 @@ function addFavorite ( e: any ) {
 		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 0 ]
 		    .innerHTML;
 
-    const drinkObj = {
+    const drinkFavorite: DrinkFavorite = {
         id: drinkId
         , name: drinkName
         , letter: drinkLetter
     };
 
     axios
-        .post( '/drinks/favorites', drinkObj )
+        .post<DrinkFavorite>( '/drinks/favorites', drinkFavorite )
         .then( response => {
             const { data } = response;
             addFavoriteItem( data );
@@ -259,22 +259,35 @@ function addFavorite ( e: any ) {
 }
 
 /// LOAD THE FAVORITE TO DOM /////
-function addFavoriteItem ( drinkObj: any ) {
+function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
     const {
         id
         , name
-        , letter
-    } = drinkObj;
+    } = drinkFavorite;
+
     const favoriteLi = document.createElement( 'li' );
     favoriteLi.classList.add( 'favorite' );
     favoriteLi.setAttribute( 'id', id );
 
     favoriteLi.innerHTML = `
-							<h3 class="fave-name">${ name }</h3>
-							<div class="button-container">
-								<button class="button" onClick="getDrinkById(${ id })">Load</button>
-								<button onClick='deleteFavorite(${ id })' class="delete-btn button"><strong>✘</strong></button>
-							</div>`;
+        <h3 class="fave-name">${ name }</h3>
+        <div class="button-container">
+            <button class="button load">Load</button>
+            <button class="delete-btn button"><strong>✘</strong></button>
+        </div>
+    `;
+
+    const loadButton = favoriteLi.querySelector('.load') as HTMLButtonElement;
+    loadButton.addEventListener('click', () => {
+        getDrinkById(id);
+    });
+
+    const deleteButton = favoriteLi.querySelector( '.delete-btn' ) as HTMLButtonElement;
+    deleteButton.addEventListener( 'click', () => {
+        deleteFavorite( id );
+    } );
+
+
     favoritesBox?.appendChild( favoriteLi );
 }
 
@@ -319,11 +332,11 @@ function loadFavorites () {
 }
 
 ///// GET DRINK By ID //////
-function getDrinkById ( id: any ) {
+function getDrinkById ( id: string ) {
     axios
-        .get( `/drinks/id/${ id }` )
+        .get<SingleDrinkRes>( `/drinks/id/${ id }` )
         .then( response => {
-            displayCocktail( response.data );
+            displayCocktail( response.data.drinks[0] );
         } )
         .catch( err => console.log( err ) );
 }

@@ -54,3 +54,9 @@ export type Drink = {
 
 export type DrinksRes = { drinks: Drink[] };
 export type SingleDrinkRes = { drinks: [ Drink ] };
+
+export type DrinkFavorite = {
+    id: string;
+    name: string;
+    letter: string;
+};
