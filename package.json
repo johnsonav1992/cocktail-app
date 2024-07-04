@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "cocktails.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,9 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.30",
+    "eslint": "^8.57.0",
+    "johnsonav-eslint-config": "^0.0.4",
+    "nodemon": "^3.1.4",
     "typescript": "^5.5.3"
   }
 }

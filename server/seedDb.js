@@ -1,20 +1,20 @@
-require('dotenv').config()
-const Sequelize = require('sequelize')
+import dotenv from 'dotenv';
+dotenv.config();
+import Sequelize from 'sequelize';
 
-const { DATABASE_URL } = process.env 
+const { DATABASE_URL } = process.env;
 
-const sequelize = new Sequelize(DATABASE_URL, {
-    dialect: 'postgres',
-    dialectOptions: {
+const sequelize = new Sequelize( DATABASE_URL, {
+    dialect: 'postgres'
+    , dialectOptions: {
         ssl: {
             rejectUnauthorized: false
         }
     }
-})
+} );
 
-module.exports = {
-    seed: (req, res) => {
-        sequelize.query(`
+export const seed = ( req, res ) => {
+    sequelize.query( `
         DROP TABLE IF EXISTS favorite_drinks;
 
         CREATE TABLE favorite_drinks (
@@ -23,10 +23,9 @@ module.exports = {
           drink_name varchar(120) NOT NULL,
           drink_letter varchar(120) NOT NULL
         );
-        `)
-        .then(() => {
-            console.log('Database seeded')
-            res.sendStatus(200)
-        }).catch(err => console.log('error seeding database', err))
-    }
-}
+        ` )
+        .then( () => {
+            console.log( 'Database seeded' );
+            res.sendStatus( 200 );
+        } ).catch( err => console.log( 'error seeding database', err ) );
+};
