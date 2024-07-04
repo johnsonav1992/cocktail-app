@@ -107,11 +107,8 @@ export const deleteFavorite = ( req, res ) => {
         WHERE drink_id = ?`,
             { replacements: [ drinkId ] }
         )
-        .then( dbRes => {
-            res.status( 200 ).send( {
-                ...dbRes[ 0 ]
-                , id: drinkId
-            } );
+        .then( () => {
+            res.status( 200 ).send( { id: drinkId } );
         } )
         .catch( err => {
             console.error( err );
