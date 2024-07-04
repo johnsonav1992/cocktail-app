@@ -152,7 +152,7 @@ function populateIngredientsDropDown ( drinks: Drink[] ) {
         e.preventDefault();
         const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
 
-        const id = select?.options[ select.selectedIndex ]?.value;
+        const id = select?.options[ select.selectedIndex ]?.value as string;
 
         getDrinkById( id );
     } );
@@ -300,7 +300,7 @@ function deleteFavorite ( drinkId: string ) {
 
             for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
                 const drinkToDelete = favoritesBox?.children[ i ];
-                
+
                 if (
                     drinkToDelete?.getAttribute( 'id' ) === String( id )
                 ) {
