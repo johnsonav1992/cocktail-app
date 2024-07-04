@@ -1,3 +1,7 @@
+import type Axios = require("axios");
+
+const axios: Axios.AxiosStatic = require("axios");
+
 //// GLOBAL SELECTORS /////
 let addFavoriteButton = document.querySelector('.add-favorite-btn')
 let favoritesBox = document.querySelector('.favorites-box')
@@ -22,7 +26,7 @@ async function initDisplay() {
 }
 
 ////// DISPLAY COCKTAIL ////////
-function displayCocktail(cocktail, index = 0) {
+function displayCocktail(cocktail: any, index = 0) {
 	// console.log(cocktail)
 	let currentDrink = cocktail.drinks[index]
 	let {
@@ -74,7 +78,7 @@ function displayCocktail(cocktail, index = 0) {
 
 ////// GET RANDOM COCKTAIL /////////
 function getRandomCocktail() {
-	let randomButton = document.querySelector('.random-cocktail')
+	let randomButton = document.querySelector('.random-cocktail') as HTMLButtonElement;
 
 	randomButton.addEventListener('click', () => {
 		axios
@@ -105,7 +109,7 @@ function getDrinkByName(e) {
 }
 
 ////// GET DRINK BY INGREDIENT //////
-function getDrinkByIngredient(e) {
+function getDrinkByIngredient(e: any) {
 	e.preventDefault()
 	let ingredient = e.target.value
 
@@ -118,11 +122,11 @@ function getDrinkByIngredient(e) {
 }
 
 /////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
-function populateIngredientsDropDown(cocktails) {
+function populateIngredientsDropDown(cocktails: any) {
 	$('.option').detach() //remove old options before repopulating
 
 	for (let i = 0; i < cocktails.drinks.length; i++) {
-		let select = document.querySelector('.ingredients-dropdown')
+		let select = document.querySelector('.ingredients-dropdown') as HTMLSelectElement;
 		let option = document.createElement('option')
 		option.classList.add('option')
 		option.text = cocktails.drinks[i].strDrink
@@ -131,9 +135,9 @@ function populateIngredientsDropDown(cocktails) {
 	}
 
 	let ingredientsForm = document.querySelector('.ingredients-form')
-	ingredientsForm.addEventListener('submit', e => {
+	ingredientsForm?.addEventListener('submit', e => {
 		e.preventDefault()
-		let select = e.target[1]
+		let select = e.target?.[1]
 		let id = select.options[select.selectedIndex].value
 
 		getDrinkById(id)

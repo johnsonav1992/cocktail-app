@@ -26,5 +26,9 @@
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.3"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.30",
+    "typescript": "^5.5.3"
   }
 }
