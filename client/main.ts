@@ -128,32 +128,36 @@ function getDrinkByIngredient ( e: KeyboardEvent ) {
 
 const ingredientSearch = debounce(
     ( ingredient: string ) => axios
-        .get( `/drinks/ingredient/${ ingredient }` )
+        .get<DrinksRes>( `/drinks/ingredient/${ ingredient }` )
         .then( response => {
-            populateIngredientsDropDown( response.data );
+            populateIngredientsDropDown( response.data.drinks );
         } )
         .catch( err => console.log( err ) )
     , 500 );
 
 /////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
-function populateIngredientsDropDown ( cocktails: any ) {
+function populateIngredientsDropDown ( drinks: Drink[] ) {
     $( '.option' ).detach(); //remove old options before repopulating
 
-    for ( let i = 0; i < cocktails.drinks.length; i++ ) {
+    for ( let i = 0; i < drinks.length; i++ ) {
         const select = document.querySelector( '.ingredients-dropdown' ) as HTMLSelectElement;
         const option = document.createElement( 'option' );
+
         option.classList.add( 'option' );
-        option.text = cocktails.drinks[ i ].strDrink;
-        option.value = cocktails.drinks[ i ].idDrink;
+
+        option.text = drinks[ i ]?.strDrink as string;
+        option.value = drinks[ i ]?.idDrink as string;
+
         select.appendChild( option );
     }
 
     const ingredientsForm = document.querySelector( '.ingredients-form' );
+
     ingredientsForm?.addEventListener( 'submit', e => {
         e.preventDefault();
-        const select = ( e.target as HTMLSelectElement )?.[ 1 ];
-        //@ts-ignore
-        const id = select?.options[ select.selectedIndex ].value;
+        const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
+
+        const id = select?.options[ select.selectedIndex ]?.value;
 
         getDrinkById( id );
     } );
