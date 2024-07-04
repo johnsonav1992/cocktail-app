@@ -110,7 +110,7 @@ export const deleteFavorite = ( req, res ) => {
         .then( dbRes => {
             res.status( 200 ).send( {
                 ...dbRes[ 0 ]
-                , drinkId
+                , id: drinkId
             } );
         } )
         .catch( err => {

@@ -1,4 +1,5 @@
 import type {
+    DeleteFavoriteRes,
     Drink
     , DrinkFavorite, DrinksRes
     , SingleDrinkRes
@@ -287,21 +288,21 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
         deleteFavorite( id );
     } );
 
-
     favoritesBox?.appendChild( favoriteLi );
 }
 
 /////// DELETE FAVORITE ///////
-function deleteFavorite ( drinkId: any ) {
+function deleteFavorite ( drinkId: string ) {
     axios
-        .delete( `/drinks/favorites/${ drinkId }` )
+        .delete<DeleteFavoriteRes>( `/drinks/favorites/${ drinkId }` )
         .then( response => {
-            const drink = response.data;
+            const { id } = response.data;
 
             for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
                 const drinkToDelete = favoritesBox?.children[ i ];
+                
                 if (
-                    drinkToDelete?.getAttribute( 'id' ) === String( drink.drinkId )
+                    drinkToDelete?.getAttribute( 'id' ) === String( id )
                 ) {
                     favoritesBox?.children[ i ]?.classList.add( 'fall' );
                     favoritesBox?.children[ i ]?.addEventListener(

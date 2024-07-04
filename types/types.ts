@@ -54,6 +54,7 @@ export type Drink = {
 
 export type DrinksRes = { drinks: Drink[] };
 export type SingleDrinkRes = { drinks: [ Drink ] };
+export type DeleteFavoriteRes = Pick<DrinkFavorite, 'id'>
 
 export type DrinkFavorite = {
     id: string;
