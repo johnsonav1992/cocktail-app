@@ -119,17 +119,21 @@ function getDrinkByName ( e: SubmitEvent ) {
 }
 
 ////// GET DRINK BY INGREDIENT //////
-function getDrinkByIngredient ( e: any ) {
+function getDrinkByIngredient ( e: KeyboardEvent ) {
     e.preventDefault();
-    const ingredient = e.target.value;
+    const ingredient = ( e.target as HTMLInputElement )?.value;
 
-    axios
+    ingredientSearch( ingredient );
+}
+
+const ingredientSearch = debounce(
+    ( ingredient: string ) => axios
         .get( `/drinks/ingredient/${ ingredient }` )
         .then( response => {
             populateIngredientsDropDown( response.data );
         } )
-        .catch( err => console.log( err ) );
-}
+        .catch( err => console.log( err ) )
+    , 500 );
 
 /////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
 function populateIngredientsDropDown ( cocktails: any ) {
@@ -337,3 +341,18 @@ closeButton.addEventListener( 'click', () => {
     alertMessage.innerText = '';
     alertModal.classList.add( 'hide' );
 } );
+
+//// UTILS ////
+function debounce<T extends ( ...args: any[] ) => void>( func: T, wait: number ): ( ...args: Parameters<T> ) => void {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    return function ( ...args: Parameters<T> ): void {
+        const later = () => {
+            clearTimeout( timeout );
+            func( ...args );
+        };
+
+        clearTimeout( timeout );
+        timeout = setTimeout( later, wait );
+    };
+}
