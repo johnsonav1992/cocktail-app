@@ -19,7 +19,7 @@ getRandomCocktail()
 
 async function initDisplay() {
 	try {
-		displayCocktail((await axios.get(`/drinks/letter/m`)).data, 15)
+		displayCocktail((await axios.get(`/drinks/letter/a`)).data, 15)
 	} catch (err) {
 		console.log(err)
 	}
