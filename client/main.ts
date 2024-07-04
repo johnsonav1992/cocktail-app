@@ -23,17 +23,19 @@ getRandomCocktail();
 async function initDisplay () {
     try {
         const cocktailRes = await axios.get<DrinksRes>( '/drinks/letter/a' );
-        displayCocktail( cocktailRes.data.drinks, 15 );
+        const initialDrink = cocktailRes.data.drinks[ 15 ];
+
+        if ( initialDrink ) {
+            displayCocktail( initialDrink );
+        }
     } catch ( err ) {
         console.log( err );
     }
 }
 
 ////// DISPLAY COCKTAIL ////////
-function displayCocktail ( drinks: Drink[], index = 0 ) {
-    const currentDrink = drinks[ index ];
-
-    if ( !currentDrink ) return;
+function displayCocktail ( drink: Drink ) {
+    if ( !drink ) return;
 
     const {
         idDrink: id
@@ -41,19 +43,16 @@ function displayCocktail ( drinks: Drink[], index = 0 ) {
         , strDrinkThumb: picture
         , strGlass: glass
         , strInstructions: instructions
-    } = currentDrink;
+    } = drink;
 
     $( '.id-holder' ).attr( 'id', id );
-
-    // Drink card
     $( '.drink-name' ).text( name );
-
-    // Picture
     $( '.drink-image' ).attr( 'src', picture );
-
-    // Ingredients List
-    $( '.ingredient' ).detach(); //remove the ingredients from previous drink
     $( '.ingredients-title' ).text( 'Ingredients' );
+    $( '.glass-name' ).text( `Glass: ${ glass }` );
+    $( '.directions-card' ).text( instructions );
+
+    $( '.ingredient' ).detach(); // remove prev. drink ingredients
 
     const numOfIngredients = 15;
 
@@ -62,28 +61,22 @@ function displayCocktail ( drinks: Drink[], index = 0 ) {
         const currentMeasure = `strMeasure${ i }` as keyof Drink;
 
         if (
-            currentDrink[ currentIngredient ] == null
-			|| currentDrink[ currentIngredient ] === ''
+            drink[ currentIngredient ] == null
+			|| drink[ currentIngredient ] === ''
         ) break;
 
-        if ( currentDrink[ currentMeasure ] == null ) {
-            currentDrink[ currentMeasure ] = '';
+        if ( drink[ currentMeasure ] == null ) {
+            drink[ currentMeasure ] = '';
         }
 
         const ingredient = document.createElement( 'li' );
 
         ingredient.innerHTML
-			= `${ currentDrink[ [ currentMeasure ] as never ] } ${ currentDrink[ [ `strIngredient${ i }` ] as never ] }`;
+			= `${ drink[ [ currentMeasure ] as never ] } ${ drink[ [ `strIngredient${ i }` ] as never ] }`;
 
         ingredient.classList.add( 'ingredient' );
         $( '.ingredients-list' ).append( ingredient );
     }
-
-    // Glass
-    $( '.glass-name' ).text( `Glass: ${ glass }` );
-
-    // Directions
-    $( '.directions-card' ).text( instructions );
 }
 
 ////// GET RANDOM COCKTAIL /////////
@@ -93,7 +86,7 @@ function getRandomCocktail () {
     randomButton.addEventListener( 'click', () => {
         axios
             .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
-            .then( response => displayCocktail( response.data.drinks ) )
+            .then( response => displayCocktail( response.data.drinks[ 0 ] ) )
             .catch( err => console.log( err ) );
     } );
 }
@@ -102,16 +95,17 @@ function getRandomCocktail () {
 function getDrinkByName ( e: SubmitEvent ) {
     e.preventDefault();
     const nameInput = ( e.target as HTMLFormElement )[ 0 ] as HTMLInputElement;
+    const drinkName = nameInput.value;
 
     axios
-        .get<SingleDrinkRes>( `/drinks/name/${ nameInput.value }` )
+        .get<SingleDrinkRes>( `/drinks/name/${ drinkName }` )
         .then( response => {
             if ( response.data.drinks == null ) {
                 return alertUser(
                     'That drink does not exist or was spelled incorrectly. Please try again!'
                 );
             }
-            displayCocktail( response.data.drinks );
+            displayCocktail( response.data.drinks[ 0 ] );
         } )
         .catch( err => console.log( err ) );
 
@@ -164,31 +158,34 @@ function populateIngredientsDropDown ( drinks: Drink[] ) {
 }
 
 ////// POPULATE DRINK DROPDOWN ////////
-function populateDrinkDropdown ( cocktails: any, letter: string ) {
+function populateDrinkDropdown ( drinks: Drink[], letter: string ) {
     $( '.option' ).detach(); //remove old options before repopulating
 
-    for ( let i = 0; i < cocktails.drinks.length; i++ ) {
+    for ( let i = 0; i < drinks.length; i++ ) {
         const select = document.querySelector( '.drink-dropdown' ) as HTMLSelectElement;
         const option = document.createElement( 'option' );
         option.classList.add( 'option' );
-        option.text = cocktails.drinks[ i ].strDrink;
-        option.value = cocktails.drinks[ i ].idDrink;
+        option.text = drinks[ i ]?.strDrink as string;
+        option.value = drinks[ i ]?.idDrink as string;
         select.appendChild( option );
     }
 
-    const form = document.querySelector( '.drinks-form' ) as HTMLFormElement;
-    form.addEventListener( 'submit', e => {
+    const onSubmit = ( e: SubmitEvent ) => {
         e.preventDefault();
+        console.log( 'SUBMIT' );
         const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
         const opt = select.options[ select.selectedIndex ]?.value;
 
-        const index = cocktails.drinks.findIndex( ( object: any ) => object.idDrink == opt );
+        const index = drinks.findIndex( ( object: any ) => object.idDrink == opt );
+        const drink = drinks[ index ];
 
-        axios
-            .get( `/drinks/letter/${ letter }` )
-            .then( response => displayCocktail( response.data, index ) )
-            .catch( err => console.log( err ) );
-    } );
+        if ( drink ) displayCocktail( drink );
+    };
+
+    const form = document.querySelector( '.drinks-form' ) as HTMLFormElement;
+
+    form.removeEventListener( 'submit', onSubmit ); // remove old listener
+    form.addEventListener( 'submit', onSubmit );
 }
 
 ////// POPULATE LETTERS DROPDOWN ////////
@@ -212,9 +209,9 @@ function populateLettersDropdown () {
 
     $( '.letters-dropdown' ).on( 'change', e => {
         const letter = ( e.target as HTMLOptionElement ).value;
-        axios.get( `/drinks/letter/${ letter }` ).then( response => {
-            console.log( response );
-            populateDrinkDropdown( response.data, letter );
+
+        axios.get<DrinksRes>( `/drinks/letter/${ letter }` ).then( response => {
+            populateDrinkDropdown( response.data.drinks, letter );
         } );
     } );
 }
