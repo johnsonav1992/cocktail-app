@@ -3,7 +3,7 @@
 Cocktail Central is a custom-built drink recipe search application that utilizes the cocktail DB as its main database API. 
 Users can use this app to search for and save drink recipes for personal use. 
 
-This app was create with JavaScript, HTML, CSS, Axios, Express, Node.js, PostgreSQL, and JQuery. 
+This app was create with JavaScript/TypeScript, HTML, CSS, Axios, Express, Node.js, PostgreSQL, and JQuery. 
 
 original build: July/August 2022
 
