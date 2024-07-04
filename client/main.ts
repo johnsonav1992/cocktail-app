@@ -1,4 +1,8 @@
-import type { Drink } from '../types/types.ts';
+import type {
+    Drink
+    , DrinksRes
+    , SingleDrinkRes
+} from '../types/types.ts';
 declare const axios: import( 'axios' ).AxiosStatic;
 
 //// GLOBAL SELECTORS /////
@@ -18,17 +22,19 @@ getRandomCocktail();
 
 async function initDisplay () {
     try {
-        const cocktailRes = await axios.get<{ drinks: Drink }>( '/drinks/letter/a' );
-        displayCocktail( cocktailRes.data, 15 );
+        const cocktailRes = await axios.get<DrinksRes>( '/drinks/letter/a' );
+        displayCocktail( cocktailRes.data.drinks, 15 );
     } catch ( err ) {
         console.log( err );
     }
 }
 
 ////// DISPLAY COCKTAIL ////////
-function displayCocktail ( cocktail: any, index = 0 ) {
-    console.log( cocktail );
-    const currentDrink = cocktail.drinks[ index ];
+function displayCocktail ( drinks: Drink[], index = 0 ) {
+    const currentDrink = drinks[ index ];
+
+    if ( !currentDrink ) return;
+
     const {
         idDrink: id
         , strDrink: name
@@ -48,25 +54,27 @@ function displayCocktail ( cocktail: any, index = 0 ) {
     // Ingredients List
     $( '.ingredient' ).detach(); //remove the ingredients from previous drink
     $( '.ingredients-title' ).text( 'Ingredients' );
+
     const numOfIngredients = 15;
 
     for ( let i = 1; i <= numOfIngredients; i++ ) {
+        const currentIngredient = `strIngredient${ i }` as keyof Drink;
+        const currentMeasure = `strMeasure${ i }` as keyof Drink;
+
         if (
-            currentDrink[ `strIngredient${ i }` ] == null
-			|| currentDrink[ `strIngredient${ i }` ] === ''
-        ) {
-            break;
-        }
-        if ( currentDrink[ `strMeasure${ i }` ] == null ) {
-            currentDrink[ `strMeasure${ i }` ] = '';
+            currentDrink[ currentIngredient ] == null
+			|| currentDrink[ currentIngredient ] === ''
+        ) break;
+
+        if ( currentDrink[ currentMeasure ] == null ) {
+            currentDrink[ currentMeasure ] = '';
         }
 
         const ingredient = document.createElement( 'li' );
-        //@ts-ignore
-        ingredient.innerHTML = `${ currentDrink[ [ `strMeasure${ i }` ] ] } ${
-            //@ts-ignore
-            currentDrink[ [ `strIngredient${ i }` ] ]
-        }`;
+
+        ingredient.innerHTML
+			= `${ currentDrink[ [ currentMeasure ] as never ] } ${ currentDrink[ [ `strIngredient${ i }` ] as never ] }`;
+
         ingredient.classList.add( 'ingredient' );
         $( '.ingredients-list' ).append( ingredient );
     }
@@ -84,8 +92,8 @@ function getRandomCocktail () {
 
     randomButton.addEventListener( 'click', () => {
         axios
-            .get( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
-            .then( response => displayCocktail( response.data ) )
+            .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
+            .then( response => displayCocktail( response.data.drinks ) )
             .catch( err => console.log( err ) );
     } );
 }
