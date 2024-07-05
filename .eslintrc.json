@@ -8,6 +8,9 @@
       "globalThis": false,
       "JSX": "readonly"
     },
-    "root": true
+    "root": true,
+    "ignorePatterns": [
+      "legacy/*"
+    ]
   }
   
