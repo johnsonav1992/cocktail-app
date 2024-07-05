@@ -94,9 +94,7 @@ function displayCocktail ( drink: Drink ) {
 }
 
 function setupRandomCocktail () {
-    const randomButton = $<HTMLButtonElement>( '.random-cocktail' );
-
-    randomButton.on( {
+    $<HTMLButtonElement>( '.random-cocktail' ).on( {
         click: () => {
             axios
                 .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
@@ -106,7 +104,6 @@ function setupRandomCocktail () {
     } );
 }
 
-////// GET DRINK BY NAME //////
 function getDrinkByName ( e: SubmitEvent ) {
     e.preventDefault();
     const nameInput = ( e.target as HTMLFormElement )[ 0 ] as HTMLInputElement;
@@ -170,7 +167,6 @@ function populateIngredientsDropDown ( drinks: Drink[] ) {
     } );
 }
 
-////// POPULATE DRINK DROPDOWN ////////
 function populateDrinkDropdown ( drinks: Drink[] ) {
     $( '.option' ).detach(); //remove old options before repopulating
 
@@ -291,15 +287,15 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
         loadButton.css( 'pointer-events', 'none' );
     }
 
-    const deleteButton = favoriteLi.find<HTMLButtonElement>( '.delete-btn' );
-    deleteButton.on( {
-        click: () => deleteFavorite( id )
-    } );
+    favoriteLi
+        .find<HTMLButtonElement>( '.delete-btn' )
+        .on( {
+            click: () => deleteFavorite( id )
+        } );
 
     favoritesBox?.append( favoriteLi );
 }
 
-/////// DELETE FAVORITE ///////
 function deleteFavorite ( drinkId: string ) {
     axios
         .delete<DeleteFavoriteRes>( `/drinks/favorites/${ drinkId }` )
@@ -310,13 +306,13 @@ function deleteFavorite ( drinkId: string ) {
                 const drinkToDelete = favoritesBox?.children().eq( i );
 
                 if ( drinkToDelete?.attr( 'id' ) === String( id ) ) {
-                    drinkToDelete.addClass( 'fall' );
-                    drinkToDelete.on(
-                        'transitionend',
-                        () => {
-                            drinkToDelete.remove();
-                        }
-                    );
+                    drinkToDelete
+                        .addClass( 'fall' )
+                        .on( 'transitionend'
+                            , () => {
+                                drinkToDelete.remove();
+                            }
+                        );
                 }
             }
         } )
