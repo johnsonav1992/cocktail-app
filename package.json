@@ -5,7 +5,8 @@
   "main": "cocktails.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "dev": "tsc --watch"
   },
   "repository": {
     "type": "git",

@@ -7,32 +7,30 @@ import type {
 declare const axios: import( 'axios' ).AxiosStatic;
 
 //// GLOBAL SELECTORS /////
-const addFavoriteButton = document.querySelector( '.add-favorite-btn' ) as HTMLButtonElement;
-const favoritesBox = document.querySelector( '.favorites-box' ) as HTMLDivElement;
-const searchForm = document.querySelector( '.search-form' ) as HTMLFormElement;
-const alertModal = document.querySelector( '.alert-wrapper' ) as HTMLDivElement;
-const alertMessage = document.querySelector( '.modal-message' ) as HTMLParagraphElement;
-const closeButton = document.querySelector( '.modal-close-btn' ) as HTMLButtonElement;
-const ingredientInput = document.querySelector( '.ingredient-input' ) as HTMLInputElement;
+const addFavoriteButton = $<HTMLButtonElement>( '.add-favorite-btn' );
+const favoritesBox = $<HTMLDivElement>( '.favorites-box' );
+const searchForm = $<HTMLFormElement>( '.search-form' );
+const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
+const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
+const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
+const ingredientInput = document.querySelector<HTMLInputElement>( '.ingredient-input' );
 
-//// Invoke starter functions on window load
-loadFavorites();
-populateLettersDropdown();
-initDisplay(); //initialize the drink to be displayed on first load
-getRandomCocktail();
-
-async function initDisplay () {
+// Invoke app start functions
+(async function appStart () {
     try {
         const cocktailRes = await axios.get<DrinksRes>( '/drinks/letter/a' );
         const initialDrink = cocktailRes.data.drinks[ 15 ];
 
-        if ( initialDrink ) {
-            displayCocktail( initialDrink );
-        }
+        // other init fns
+        loadFavorites();
+        populateLettersDropdown();
+        setupRandomCocktail();
+
+        if ( initialDrink ) displayCocktail( initialDrink );
     } catch ( err ) {
         console.log( err );
     }
-}
+})();
 
 ////// DISPLAY COCKTAIL ////////
 function displayCocktail ( drink: Drink ) {
@@ -81,7 +79,7 @@ function displayCocktail ( drink: Drink ) {
 }
 
 ////// GET RANDOM COCKTAIL /////////
-function getRandomCocktail () {
+function setupRandomCocktail () {
     const randomButton = document.querySelector( '.random-cocktail' ) as HTMLButtonElement;
 
     randomButton.addEventListener( 'click', () => {
@@ -225,7 +223,7 @@ function addFavorite ( e: any ) {
     const id = $( '.id-holder' ).attr( 'id' ) as string;
 
     for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
-        if ( Number( favoritesBox?.children[ i ]?.getAttribute( 'id' ) ) === +id )
+        if ( Number( favoritesBox?.children().eq(i).attr( 'id' ) ) === +id )
             return alertUser( 'You\'ve already added that drink!' );
     }
 
@@ -288,7 +286,7 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
         deleteFavorite( id );
     } );
 
-    favoritesBox?.appendChild( favoriteLi );
+    favoritesBox?.append( favoriteLi );
 }
 
 /////// DELETE FAVORITE ///////
@@ -299,13 +297,13 @@ function deleteFavorite ( drinkId: string ) {
             const { id } = response.data;
 
             for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
-                const drinkToDelete = favoritesBox?.children[ i ];
+                const drinkToDelete = favoritesBox?.children().eq( i );
 
                 if (
-                    drinkToDelete?.getAttribute( 'id' ) === String( id )
+                    drinkToDelete?.attr( 'id' ) === String( id )
                 ) {
-                    favoritesBox?.children[ i ]?.classList.add( 'fall' );
-                    favoritesBox?.children[ i ]?.addEventListener(
+                    favoritesBox?.children().eq( i ).addClass( 'fall' );
+                    favoritesBox?.children().eq( i ).on(
                         'transitionend',
                         () => {
                             drinkToDelete.remove();
@@ -344,18 +342,20 @@ function getDrinkById ( id: string ) {
 
 ///// ALERT FUNCTION /////
 function alertUser ( message: string ) {
-    alertMessage.innerText = message;
-    alertModal.classList.remove( 'hide' );
+    alertMessage.text( message );
+    alertModal.removeClass( 'hide' );
 }
 
 ////// GLOBAL LISTENERS ///////
-addFavoriteButton.addEventListener( 'click', addFavorite );
-searchForm.addEventListener( 'submit', getDrinkByName );
-ingredientInput.addEventListener( 'keyup', getDrinkByIngredient );
-closeButton.addEventListener( 'click', () => {
-    alertMessage.innerText = '';
-    alertModal.classList.add( 'hide' );
-} );
+addFavoriteButton.on( { click: addFavorite } );
+searchForm.on( { submit: getDrinkByName }) ;
+ingredientInput?.addEventListener( 'keyup', getDrinkByIngredient );
+closeButton.on( { 
+    click: () => {
+        alertMessage.text( '' );
+        alertModal.addClass( 'hide' );
+    } 
+} ) ;
 
 //// UTILS ////
 function debounce<T extends ( ...args: any[] ) => void>( func: T, wait: number ): ( ...args: Parameters<T> ) => void {
