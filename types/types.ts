@@ -57,7 +57,7 @@ export type SingleDrinkRes = { drinks: [ Drink ] };
 export type DeleteFavoriteRes = Pick<DrinkFavorite, 'id'>;
 
 export type DrinkFavorite = {
-    id: number;
+    id: string;
     name: string;
     letter: string;
 };
