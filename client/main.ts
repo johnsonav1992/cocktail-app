@@ -1,7 +1,8 @@
 import type {
-    DeleteFavoriteRes,
-    Drink
-    , DrinkFavorite, DrinksRes
+    DeleteFavoriteRes
+    , Drink
+    , DrinkFavorite
+    , DrinksRes
     , SingleDrinkRes
 } from '../types/types.ts';
 declare const axios: import( 'axios' ).AxiosStatic;
@@ -13,10 +14,10 @@ const searchForm = $<HTMLFormElement>( '.search-form' );
 const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
 const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
 const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
-const ingredientInput = document.querySelector<HTMLInputElement>( '.ingredient-input' );
+const ingredientInput = $<HTMLInputElement>( '.ingredient-input' );
 
 // Invoke app start functions
-(async function appStart () {
+( async function appStart () {
     try {
         const cocktailRes = await axios.get<DrinksRes>( '/drinks/letter/a' );
         const initialDrink = cocktailRes.data.drinks[ 15 ];
@@ -30,9 +31,8 @@ const ingredientInput = document.querySelector<HTMLInputElement>( '.ingredient-i
     } catch ( err ) {
         console.log( err );
     }
-})();
+} )();
 
-////// DISPLAY COCKTAIL ////////
 function displayCocktail ( drink: Drink ) {
     if ( !drink ) return;
 
@@ -51,7 +51,7 @@ function displayCocktail ( drink: Drink ) {
     $( '.glass-name' ).text( `Glass: ${ glass }` );
     $( '.directions-card' ).text( instructions );
 
-    $( '.ingredient' ).detach(); // remove prev. drink ingredients
+    $( '.ingredient' ).detach(); // remove prev. drink ingredients before repopulating
 
     const numOfIngredients = 15;
 
@@ -68,25 +68,30 @@ function displayCocktail ( drink: Drink ) {
             drink[ currentMeasure ] = '';
         }
 
-        const ingredient = document.createElement( 'li' );
+        const ingredient = $<HTMLLIElement>( '<li></li>' );
 
-        ingredient.innerHTML
-			= `${ drink[ [ currentMeasure ] as never ] } ${ drink[ [ `strIngredient${ i }` ] as never ] }`;
+        ingredient.html(
+            `
+                ${ drink[ currentMeasure ] } 
+                ${ drink[ `strIngredient${ i }` as keyof Drink ] }
+            `
+        );
 
-        ingredient.classList.add( 'ingredient' );
+        ingredient.addClass( 'ingredient' );
         $( '.ingredients-list' ).append( ingredient );
     }
 }
 
-////// GET RANDOM COCKTAIL /////////
 function setupRandomCocktail () {
-    const randomButton = document.querySelector( '.random-cocktail' ) as HTMLButtonElement;
+    const randomButton = $<HTMLButtonElement>( '.random-cocktail' );
 
-    randomButton.addEventListener( 'click', () => {
-        axios
-            .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
-            .then( response => displayCocktail( response.data.drinks[ 0 ] ) )
-            .catch( err => console.log( err ) );
+    randomButton.on( {
+        click: () => {
+            axios
+                .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
+                .then( response => displayCocktail( response.data.drinks[ 0 ] ) )
+                .catch( err => console.log( err ) );
+        }
     } );
 }
 
@@ -111,7 +116,6 @@ function getDrinkByName ( e: SubmitEvent ) {
     nameInput.value = '';
 }
 
-////// GET DRINK BY INGREDIENT //////
 function getDrinkByIngredient ( e: KeyboardEvent ) {
     e.preventDefault();
     const ingredient = ( e.target as HTMLInputElement )?.value;
@@ -128,31 +132,32 @@ const ingredientSearch = debounce(
         .catch( err => console.log( err ) )
     , 500 );
 
-/////// POPULATE INGREDIENTS DRINKS DROPDOWN ////////
 function populateIngredientsDropDown ( drinks: Drink[] ) {
     $( '.option' ).detach(); //remove old options before repopulating
 
     for ( let i = 0; i < drinks.length; i++ ) {
-        const select = document.querySelector( '.ingredients-dropdown' ) as HTMLSelectElement;
-        const option = document.createElement( 'option' );
+        const select = $<HTMLSelectElement>( '.ingredients-dropdown' );
+        const option = $<HTMLOptionElement>( '<option></option>' );
 
-        option.classList.add( 'option' );
+        option.addClass( 'option' );
 
-        option.text = drinks[ i ]?.strDrink as string;
-        option.value = drinks[ i ]?.idDrink as string;
+        option.text( drinks[ i ]?.strDrink as string );
+        option.val( drinks[ i ]?.idDrink as string );
 
-        select.appendChild( option );
+        select.append( option );
     }
 
-    const ingredientsForm = document.querySelector( '.ingredients-form' );
+    const ingredientsForm = $<HTMLFormElement>( '.ingredients-form' );
 
-    ingredientsForm?.addEventListener( 'submit', e => {
-        e.preventDefault();
-        const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
+    ingredientsForm.on( {
+        submit: e => {
+            e.preventDefault();
+            const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
 
-        const id = select?.options[ select.selectedIndex ]?.value as string;
+            const id = select?.options[ select.selectedIndex ]?.value as string;
 
-        getDrinkById( id );
+            getDrinkById( +id );
+        }
     } );
 }
 
@@ -222,8 +227,8 @@ function addFavorite ( e: any ) {
     console.log( listItemLength );
     const id = $( '.id-holder' ).attr( 'id' ) as string;
 
-    for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
-        if ( Number( favoritesBox?.children().eq(i).attr( 'id' ) ) === +id )
+    for ( let i = 0; i < favoritesBox.children.length; i++ ) {
+        if ( Number( favoritesBox.children().eq( i ).attr( 'id' ) ) === +id )
             return alertUser( 'You\'ve already added that drink!' );
     }
 
@@ -233,12 +238,9 @@ function addFavorite ( e: any ) {
     const drinkId
 		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 2 ].id;
     const drinkLetter
-		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 0 ].innerHTML
-		    .charAt( 0 )
-		    .toLowerCase();
+		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 0 ].innerHTML.charAt( 0 ).toLowerCase();
     const drinkName
-		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 0 ]
-		    .innerHTML;
+		= e.target.parentNode.parentNode.parentNode.children[ 1 ].children[ 0 ].innerHTML;
 
     const drinkFavorite: DrinkFavorite = {
         id: drinkId
@@ -264,39 +266,47 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
         , name
     } = drinkFavorite;
 
-    const favoriteLi = document.createElement( 'li' );
-    favoriteLi.classList.add( 'favorite' );
-    favoriteLi.setAttribute( 'id', id );
+    const favoriteLi = $( '<li></li>' );
+    favoriteLi.addClass( 'favorite' );
+    favoriteLi.attr( 'id', id );
 
-    favoriteLi.innerHTML = `
+    favoriteLi.html( `
         <h3 class="fave-name">${ name }</h3>
         <div class="button-container">
             <button class="button load">Load</button>
             <button class="delete-btn button"><strong>✘</strong></button>
         </div>
-    `;
+    ` );
 
-    const loadButton = favoriteLi.querySelector('.load') as HTMLButtonElement;
-    loadButton.addEventListener('click', () => {
-        getDrinkById(id);
-    });
+    const loadButton = favoriteLi.find<HTMLButtonElement>( '.load' );
+    loadButton.on( {
+        click: () => getDrinkById( id )
+    } );
 
-    const deleteButton = favoriteLi.querySelector( '.delete-btn' ) as HTMLButtonElement;
-    deleteButton.addEventListener( 'click', () => {
-        deleteFavorite( id );
+    const selectedDrinkId = $( '.id-holder' ).attr( 'id' );
+    const favoriteId = favoriteLi.attr( 'id' );
+
+    if ( selectedDrinkId === favoriteId ) {
+        loadButton.prop( 'disabled', true );
+        loadButton.css( 'pointer-events', 'none' );
+    }
+
+    const deleteButton = favoriteLi.find<HTMLButtonElement>( '.delete-btn' );
+    deleteButton.on( {
+        click: () => deleteFavorite( id )
     } );
 
     favoritesBox?.append( favoriteLi );
 }
 
 /////// DELETE FAVORITE ///////
-function deleteFavorite ( drinkId: string ) {
+function deleteFavorite ( drinkId: number ) {
     axios
         .delete<DeleteFavoriteRes>( `/drinks/favorites/${ drinkId }` )
         .then( response => {
             const { id } = response.data;
 
-            for ( let i = 0; i < favoritesBox?.children.length!; i++ ) {
+            for ( let i = 0; i < favoritesBox.children().length; i++ ) {
                 const drinkToDelete = favoritesBox?.children().eq( i );
 
                 if (
@@ -331,11 +341,11 @@ function loadFavorites () {
 }
 
 ///// GET DRINK By ID //////
-function getDrinkById ( id: string ) {
+function getDrinkById ( id: number ) {
     axios
         .get<SingleDrinkRes>( `/drinks/id/${ id }` )
         .then( response => {
-            displayCocktail( response.data.drinks[0] );
+            displayCocktail( response.data.drinks[ 0 ] );
         } )
         .catch( err => console.log( err ) );
 }
@@ -348,14 +358,14 @@ function alertUser ( message: string ) {
 
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.on( { click: addFavorite } );
-searchForm.on( { submit: getDrinkByName }) ;
-ingredientInput?.addEventListener( 'keyup', getDrinkByIngredient );
-closeButton.on( { 
+searchForm.on( { submit: getDrinkByName } );
+ingredientInput.on( { keyup: getDrinkByIngredient } );
+closeButton.on( {
     click: () => {
         alertMessage.text( '' );
         alertModal.addClass( 'hide' );
-    } 
-} ) ;
+    }
+} );
 
 //// UTILS ////
 function debounce<T extends ( ...args: any[] ) => void>( func: T, wait: number ): ( ...args: Parameters<T> ) => void {
