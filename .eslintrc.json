@@ -10,7 +10,8 @@
     },
     "root": true,
     "ignorePatterns": [
-      "legacy/*"
+      "legacy/*",
+      "dist/*"
     ]
   }
   
