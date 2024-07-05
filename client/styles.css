@@ -1,0 +1,452 @@
+@font-face {
+    font-family: "HWT Republic Gothic W00 Outline";
+    src: url(./fonts/83ba9f5940d12014668455513a51f069.eot);
+    src: url(./fonts/83ba9f5940d12014668455513a51f069.svg);
+    src: url(./fonts/83ba9f5940d12014668455513a51f069.ttf);
+    src: url(./fonts/83ba9f5940d12014668455513a51f069.woff);
+    src: url(./fonts/83ba9f5940d12014668455513a51f069.woff2);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    column-gap: 8rem;
+    margin-left: 8rem;
+    margin-right: 8rem;
+    margin-bottom: 5rem;
+}
+
+@media (min-width: 700px) {
+    .header {
+        grid-column: span 2;
+    }
+}
+
+.header a {
+    text-decoration: none;
+}
+
+.header a:hover {
+    cursor: pointer;
+}
+
+.title-box {
+    display: flex;
+    justify-content: center;
+    max-height: 200px;
+}
+
+.header-title {
+    text-align: center;
+    font-family: 'HWT Republic Gothic W00 Outline';
+    font-size: 3rem;
+    font-weight: bold;
+    color: black;
+    text-shadow: 0px 0px 6px #1652b4;
+}
+
+.image-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8%;
+}
+
+.logo {
+    max-width: 3em;
+    box-shadow: none;
+    filter: drop-shadow(0px 0px 3px #8b513e)
+}
+
+.drink-input {
+    margin: 20px;
+    width: 250px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    gap: 2rem;
+}
+
+.drink-card, 
+.options-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 300px;
+    max-width: 500px;
+    padding: 2.5rem;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 
+        3px 3px 20px lightgray,
+        3px 3px 30px lightgray,
+        3px 3px 40px lightgray;
+    border-radius: 2.5em;
+}
+
+.options-box {
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.options-bg {
+    position: absolute;
+    top: 20%;
+    left: 15;
+    width: 100%;
+    height: 100%;
+    background-image: url('./images/martini-glass-transparent-background-21.png');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 150%;
+    opacity: .15;
+    z-index: -1;
+}
+
+.drink-name {
+    font-size: 2.5rem;
+    font-family: 'Contrail One', sans-serif;
+    font-weight: 700;
+    color: #164795;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.ingredients-list-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    min-width: 85%;
+    padding: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 15px;
+    border: 1px solid #164795;
+    border-radius: 1em;
+}
+
+.ingredients-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    min-width: 50%;
+    padding: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.glass-name {
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    font-size: .9rem;
+    align-self: center;
+}
+
+.list-title {
+    color: #164795;
+    font-size: 1.25rem;
+    font-family: 'Contrail One', sans-serif;
+    align-self: center;
+}
+
+.ingredient {
+    list-style-type: none;
+    text-align: justify;
+    color: #8b513e;
+    font-size: 1rem;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+
+}
+
+.drink-card img {
+    width: 85%;
+    height: auto;
+    box-shadow: 
+        3px 3px 20px lightgray,
+        3px 3px 20px lightgray;
+    border-radius: 1em;
+}
+
+.directions-card {
+    width: minmax(85%, 85%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 50%;
+    padding: 1rem;
+    background: linear-gradient(.25turn, hsl(217, 74%, 70%), 30%, hsl(15, 38%, 70%));
+    border-radius: .5em;
+    color: white;
+    font-weight: bold;
+    font-size: .8rem;
+    font-family: sans-serif;
+    overflow-y: scroll;
+    overflow: -moz-scrollbars-none;
+}
+
+.directions-card::-webkit-scrollbar {
+    display: none;
+}
+
+.button {
+    font-size: 1rem;
+    font-family: 'Contrail One', sans-serif;
+    min-width: max-content;
+    border: none;
+    background-color: hsl(15, 38%, 70%);
+    border-radius: .5em;
+    padding: .25rem .75rem;
+    box-shadow: 2px 1px 5px gray;
+    cursor: pointer;
+    color: #8b513e;
+}
+
+.button:hover {
+    background-color: hsl(15, 47%, 79%);
+}
+
+.drinks-form,
+.ingredients-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    max-width: 100%;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.dropdown,
+.input {
+    border: none;
+    background-color: hsl(217, 74%, 70%);
+    border-radius: .5em;
+    padding: .25rem;
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+}
+
+.input::placeholder {
+    color: #164795;
+}
+
+.dropdown option:not(:checked) {
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    background-color: hsl(217, 74%, 70%);
+}
+
+.dropdown:hover,
+.input:hover {
+    background-color: hsl(217, 77%, 85%);
+}
+
+.letters-dropdown {
+    max-width: 130px;
+}
+
+.drink-dropdown,
+.ingredients-dropdown {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.select-drink-title,
+.search-drink-title {
+    align-self: flex-start;
+}
+
+.favorites-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 100%;
+    border-top: 1px solid #164795;
+    margin-top: 1rem;
+}
+
+.favorites-box {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    min-height: 400px;
+    max-height: 400px;
+    overflow: scroll;
+    overflow: -moz-scrollbars-none;
+}
+
+.favorites-box::-webkit-scrollbar {
+    display: none;
+}
+
+.favorite {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 100%;
+    max-height: 50px;
+    border: 1px solid #164795;
+    padding: 0rem .5rem;
+    margin: 0;
+    border-radius: .5em;
+    transition: all 700ms ease;
+}
+
+.favorite-li {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+}
+
+.fave-name {
+    color: #164795;
+    font-family: 'Raleway', sans-serif;
+    list-style-type: none;
+}
+
+.tiny-img {
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.fall { 
+    transform: translateY(8rem) rotateZ(15deg);
+    opacity: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: .5rem;
+}
+
+.alert-bg{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(52, 52, 52);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .8;
+    z-index: 9;
+}
+
+.alert-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    position: fixed;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Contrail One', sans-serif;
+    color: #164795;
+    background-color: white;
+    min-height: 25vh;
+    width: 25vw;
+    padding: 2rem;
+    z-index: 10;
+    border-radius: 1rem;
+    box-shadow: 3px 3px 6px rgb(63, 63, 63);
+}
+
+.hide {
+    display: none;
+}
+
+.copyright {
+    text-align: center;
+    color: #164795;
+    text-shadow: 1px 1px 5px gray;
+    font-family: 'Raleway', sans-serif;
+    padding: 1rem;
+    padding-bottom: 2rem;
+}
+
+.copyright a {
+    text-decoration: none;
+    color: #164795;
+}
+
+@media (max-width: 1300px) {
+    form {
+        flex-direction: column;
+    }
+
+    .search-btn,
+    .load-drink-btn,
+    .options-box,
+    select {
+        align-self: flex-start;
+    }
+
+    input, 
+    select,
+    .dropdown {
+        width: 200px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .title-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-wrapper {
+        order: 2;
+    }
+
+    .header-title {
+        margin-bottom: 0;
+    }
+
+    .ingredient {
+        font-size: .75rem;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(1, minmax(200px, 1fr));
+        width: 90%
+    }
+
+    .alert-modal {
+        min-height: 25vh;
+        width: 75vw;
+    }
+}
