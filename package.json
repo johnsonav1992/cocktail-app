@@ -2,7 +2,7 @@
   "name": "cocktail-app",
   "version": "1.0.0",
   "description": "",
-  "main": "cocktails.js",
+  "main": "dist/main.js",
   "type": "module",
   "scripts": {
     "start": "nodemon server.js",
