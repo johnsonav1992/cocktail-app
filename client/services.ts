@@ -17,7 +17,6 @@ export async function getDrinkById ( id: string ) {
     return axios
         .get<SingleDrinkRes>( `/drinks/id/${ id }` )
         .then( res => res.data.drinks[ 0 ] );
-    // .catch( err => console.log( err ) );
 }
 
 export async function getDrinkByName ( drinkName: string ) {
@@ -36,7 +35,6 @@ export async function getRandomCocktail () {
     return axios
         .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
         .then( res => res.data.drinks[ 0 ] );
-    // .catch( err => console.log( err ) );
 }
 
 export async function getFavorites () {
@@ -49,16 +47,10 @@ export async function addFavoriteDrink ( drinkFavorite: DrinkFavorite ) {
     return axios
         .post<DrinkFavorite>( '/drinks/favorites', drinkFavorite )
         .then( res => res.data );
-    // .catch( error => {
-    //     console.log( error );
-    // } );
 }
 
 export async function deleteFavoriteDrink ( id: string ) {
     return axios
         .delete<DeleteFavoriteRes>( `/drinks/favorites/${ id }` )
         .then( res => res.data.id );
-    // .catch( error => {
-    //     console.log( error );
-    // } );
 }
