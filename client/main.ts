@@ -73,6 +73,12 @@ lettersDropdown.on( 'change', e => {
     }
 } )();
 
+function renderFavoritesOnLoad () {
+    getFavorites()
+        .then( favorites => favorites.forEach( drink => appendFavorite( drink ) ) )
+        .catch( err => console.error( err ) );
+}
+
 function renderCocktail ( drink: Drink ) {
     if ( !drink ) return;
 
@@ -146,6 +152,12 @@ function getAndLoadDrinkByName ( e: SubmitEvent ) {
     $( 'name-input' ).val( '' );
 }
 
+function getAndLoadDrinkById ( id: string ) {
+    getDrinkById( id )
+        .then( drink => renderCocktail( drink ) )
+        .catch( err => console.log( err ) );
+}
+
 function searchForDrinksByIngredient ( e: KeyboardEvent ) {
     e.preventDefault();
     const ingredient = ( e.target as HTMLInputElement )?.value;
@@ -165,19 +177,11 @@ const ingredientSearch = debounce(
             .catch( err => console.log( err ) )
     , 500 );
 
-function populateDropdown ( selector: string, drinks: Drink[] | undefined ) {
-    if ( !drinks ) return;
+function submitDrinkForm ( e: SubmitEvent ) {
+    e.preventDefault();
+    const { drink: drinkId } = getFormData<DrinkDropdownFormData>( e.target as HTMLFormElement );
 
-    $( '.option' ).detach(); //remove old options before repopulating
-
-    appendDrinkSelectOptions(
-        $<HTMLSelectElement>( selector )
-        , drinks
-    );
-
-    const firstDrink = drinks[ 0 ];
-
-    firstDrink && renderCocktail( firstDrink );
+    if ( drinkId ) getAndLoadDrinkById( drinkId );
 }
 
 function populateLettersDropdown () {
@@ -272,31 +276,27 @@ function deleteFavorite ( drinkId: string ) {
         } );
 }
 
-function renderFavoritesOnLoad () {
-    getFavorites()
-        .then( favorites => favorites.forEach( drink => appendFavorite( drink ) ) )
-        .catch( err => console.error( err ) );
-}
-
-function getAndLoadDrinkById ( id: string ) {
-    getDrinkById( id )
-        .then( drink => renderCocktail( drink ) )
-        .catch( err => console.log( err ) );
-}
-
-function submitDrinkForm ( e: SubmitEvent ) {
-    e.preventDefault();
-    const { drink: drinkId } = getFormData<DrinkDropdownFormData>( e.target as HTMLFormElement );
-
-    if ( drinkId ) getAndLoadDrinkById( drinkId );
-}
-
 function alertUser ( message: string ) {
     alertMessage.text( message );
     alertModal.removeClass( 'hide' );
 }
 
 //// UTILS ////
+function populateDropdown ( selector: string, drinks: Drink[] | undefined ) {
+    if ( !drinks ) return;
+
+    $( '.option' ).detach(); //remove old options before repopulating
+
+    appendDrinkSelectOptions(
+        $<HTMLSelectElement>( selector )
+        , drinks
+    );
+
+    const firstDrink = drinks[ 0 ];
+
+    firstDrink && renderCocktail( firstDrink );
+}
+
 function appendDrinkSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] ) {
     for ( let i = 0; i < drinks.length; i++ ) {
         const option = $( '<option></option>' );
