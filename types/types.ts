@@ -61,3 +61,5 @@ export type DrinkFavorite = {
     name: string;
     letter: string;
 };
+
+export type DrinkDropdownFormData = { drink: Drink['idDrink'] };

@@ -1,6 +1,7 @@
 import type {
     DeleteFavoriteRes
     , Drink
+    , DrinkDropdownFormData
     , DrinkFavorite
     , DrinksRes
     , SingleDrinkRes
@@ -12,30 +13,37 @@ const addFavoriteButton = $<HTMLButtonElement>( '.add-favorite-btn' );
 const favoritesBox = $<HTMLDivElement>( '.favorites-box' );
 const searchForm = $<HTMLFormElement>( '.search-form' );
 const ingredientsForm = $<HTMLFormElement>( '.ingredients-form' );
+const drinksForm = $<HTMLFormElement>( '.drinks-form' );
 const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
 const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
 const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
 const ingredientInput = $<HTMLInputElement>( '.ingredient-input' );
 const ingredientsDropdown = $<HTMLSelectElement>( '.ingredients-dropdown' );
+const lettersDropdown = $<HTMLSelectElement>( '.letters-dropdown' );
+const drinkDropdown = $<HTMLSelectElement>( '.drink-dropdown' );
 
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.on( { click: addFavorite } );
 searchForm.on( { submit: getDrinkByName } );
-ingredientsForm.on( {
-    submit: e => {
-        e.preventDefault();
-        const data = getFormData<{ drink: Drink['idDrink'] }>( e.target );
-
-        getDrinkById( data.drink );
-    }
-} );
+ingredientsForm.on( { submit: submitDrinkForm } );
 ingredientInput.on( { keyup: getDrinkByIngredient } );
-ingredientsDropdown.on( { change: () => ingredientsForm.submit() } );
+ingredientsDropdown.on( { change: () => ingredientsForm.trigger( 'submit' ) } );
+drinksForm.on( { submit: submitDrinkForm } );
+drinkDropdown.on( { change: () => drinksForm.trigger( 'submit' ) } );
 closeButton.on( {
     click: () => {
         alertMessage.text( '' );
         alertModal.addClass( 'hide' );
     }
+} );
+lettersDropdown.on( 'change', e => {
+    const letter = e.target.value;
+
+    axios
+        .get<DrinksRes>( `/drinks/letter/${ letter }` )
+        .then( response => {
+            populateDrinkDropdown( response.data.drinks );
+        } );
 } );
 
 // Invoke app start functions
@@ -167,33 +175,23 @@ function populateIngredientsDropDown ( drinks: Drink[] | undefined ) {
 
         select.append( option );
     }
+
+    const firstDrink = drinks[ 0 ];
+
+    firstDrink && displayCocktail( firstDrink );
 }
 
 function populateDrinkDropdown ( drinks: Drink[] ) {
     $( '.option' ).detach(); //remove old options before repopulating
 
-    for ( let i = 0; i < drinks.length; i++ ) {
-        const select = $<HTMLSelectElement>( '.drink-dropdown' );
-        const option = $( '<option></option>' );
-        option.addClass( 'option' );
-        option.text( drinks[ i ]?.strDrink as string );
-        option.val( drinks[ i ]?.idDrink as string );
-        select.append( option );
-    }
+    appendSelectOptions(
+        $<HTMLSelectElement>( '.drink-dropdown' )
+        , drinks
+    );
 
-    $<HTMLFormElement>( '.drinks-form' ).on( {
-        submit: e => {
-            e.preventDefault();
+    const firstDrink = drinks[ 0 ];
 
-            const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
-            const opt = select.options[ select.selectedIndex ]?.value;
-
-            const index = drinks.findIndex( drink => drink.idDrink == opt );
-            const drink = drinks[ index ];
-
-            if ( drink ) displayCocktail( drink );
-        }
-    } );
+    firstDrink && getDrinkById( firstDrink.idDrink );
 }
 
 ////// POPULATE LETTERS DROPDOWN ////////
@@ -206,22 +204,12 @@ function populateLettersDropdown () {
         , 'Y', 'Z'
     ];
 
-    const lettersDropdown = document.querySelector( '.letters-dropdown' ) as HTMLSelectElement;
-
     for ( let i = 0; i < alpha.length; i++ ) {
-        lettersDropdown.options[ lettersDropdown.options.length ] = new Option(
+        lettersDropdown.append( new Option(
             alpha[ i ],
             alpha[ i ]?.toLowerCase()
-        );
+        ) );
     }
-
-    $( '.letters-dropdown' ).on( 'change', e => {
-        const letter = ( e.target as HTMLOptionElement ).value;
-
-        axios.get<DrinksRes>( `/drinks/letter/${ letter }` ).then( response => {
-            populateDrinkDropdown( response.data.drinks );
-        } );
-    } );
 }
 
 function addFavorite () {
@@ -251,14 +239,14 @@ function addFavorite () {
         .post<DrinkFavorite>( '/drinks/favorites', drinkFavorite )
         .then( response => {
             const { data } = response;
-            addFavoriteItem( data );
+            appendFavorite( data );
         } )
         .catch( error => {
             console.log( error );
         } );
 }
 
-function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
+function appendFavorite ( drinkFavorite: DrinkFavorite ) {
     const {
         id
         , name
@@ -278,23 +266,11 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
 
     favoriteLi
         .find<HTMLButtonElement>( '.load' )
-        .on( {
-            click: () => getDrinkById( id )
-        } );
-
-    // const selectedDrinkId = $( '.id-holder' ).attr( 'id' );
-    // const favoriteId = favoriteLi.attr( 'id' );
-
-    // if ( selectedDrinkId === favoriteId ) {
-    //     loadButton.prop( 'disabled', true );
-    //     loadButton.css( 'pointer-events', 'none' );
-    // }
+        .on( { click: () => getDrinkById( id ) } );
 
     favoriteLi
         .find<HTMLButtonElement>( '.delete-btn' )
-        .on( {
-            click: () => deleteFavorite( id )
-        } );
+        .on( { click: () => deleteFavorite( id ) } );
 
     favoritesBox?.append( favoriteLi );
 }
@@ -330,7 +306,7 @@ function renderFavoritesOnLoad () {
         .then( response => {
             response
                 .data
-                .forEach( ( drink: DrinkFavorite ) => addFavoriteItem( drink ) );
+                .forEach( ( drink: DrinkFavorite ) => appendFavorite( drink ) );
         } )
         .catch( err => console.error( err ) );
 }
@@ -344,12 +320,29 @@ function getDrinkById ( id: string ) {
         .catch( err => console.log( err ) );
 }
 
+function submitDrinkForm ( e: SubmitEvent ) {
+    e.preventDefault();
+    const data = getFormData<DrinkDropdownFormData>( e.target as HTMLFormElement );
+
+    if ( data.drink ) getDrinkById( data.drink );
+}
+
 function alertUser ( message: string ) {
     alertMessage.text( message );
     alertModal.removeClass( 'hide' );
 }
 
 //// UTILS ////
+function appendSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] ) {
+    for ( let i = 0; i < drinks.length; i++ ) {
+        const option = $( '<option></option>' );
+        option.addClass( 'option' );
+        option.text( drinks[ i ]?.strDrink as string );
+        option.val( drinks[ i ]?.idDrink as string );
+        selectEl.append( option );
+    }
+}
+
 function debounce<T extends ( ...args: never[] ) => void>( func: T, wait: number ): ( ...args: Parameters<T> ) => void {
     let timeout: ReturnType<typeof setTimeout>;
 
@@ -366,5 +359,4 @@ function debounce<T extends ( ...args: never[] ) => void>( func: T, wait: number
 
 function getFormData <TData> ( form: HTMLFormElement ) {
     return Object.fromEntries( new FormData( form ) ) as TData;
-
 }
