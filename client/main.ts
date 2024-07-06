@@ -2,6 +2,7 @@ import type {
     Drink
     , DrinkDropdownFormData
     , DrinkFavorite
+    , NameDropdownFormData
 } from '../types/types.ts';
 import {
     addFavoriteDrink
@@ -103,9 +104,7 @@ function renderCocktail ( drink: Drink ) {
 			|| drink[ currentIngredient ] === ''
         ) break;
 
-        if ( drink[ currentMeasure ] == null ) {
-            drink[ currentMeasure ] = '';
-        }
+        if ( drink[ currentMeasure ] == null ) drink[ currentMeasure ] = '';
 
         const ingredient = $<HTMLLIElement>( '<li></li>' );
 
@@ -122,18 +121,15 @@ function renderCocktail ( drink: Drink ) {
 }
 
 function setupRandomCocktail () {
-    $<HTMLButtonElement>( '.random-cocktail' ).on(
-        {
-            click: () => getRandomCocktail()
-                .then( cocktail => renderCocktail( cocktail ) )
-        }
-    );
+    $<HTMLButtonElement>( '.random-cocktail' ).on( {
+        click: () => getRandomCocktail()
+            .then( cocktail => renderCocktail( cocktail ) )
+    } );
 }
 
 function getAndLoadDrinkByName ( e: SubmitEvent ) {
     e.preventDefault();
-    const nameInput = ( e.target as HTMLFormElement )[ 0 ] as HTMLInputElement;
-    const drinkName = nameInput.value;
+    const { name: drinkName } = getFormData<NameDropdownFormData>( e.target as HTMLFormElement );
 
     getDrinkByName( drinkName )
         .then( drink => {
@@ -147,7 +143,7 @@ function getAndLoadDrinkByName ( e: SubmitEvent ) {
         } )
         .catch( err => console.log( err ) );
 
-    nameInput.value = '';
+    $( 'name-input' ).val( '' );
 }
 
 function searchForDrinksByIngredient ( e: KeyboardEvent ) {

@@ -63,3 +63,4 @@ export type DrinkFavorite = {
 };
 
 export type DrinkDropdownFormData = { drink: Drink['idDrink'] };
+export type NameDropdownFormData = { name: Drink['strDrink'] };
