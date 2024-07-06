@@ -5,7 +5,7 @@ const app = express();
 
 app.use( express.json() );
 app.use( cors() );
-app.use( express.static( 'dist/client' ) );
+app.use( express.static( 'client' ) );
 
 ///Routes///
 routes( app );
