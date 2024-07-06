@@ -16,6 +16,7 @@ const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
 const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
 const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
 const ingredientInput = $<HTMLInputElement>( '.ingredient-input' );
+const ingredientsDropdown = $<HTMLSelectElement>( '.ingredients-dropdown' );
 
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.on( { click: addFavorite } );
@@ -29,6 +30,7 @@ ingredientsForm.on( {
     }
 } );
 ingredientInput.on( { keyup: getDrinkByIngredient } );
+ingredientsDropdown.on( { change: () => ingredientsForm.submit() } );
 closeButton.on( {
     click: () => {
         alertMessage.text( '' );
