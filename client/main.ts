@@ -9,14 +9,18 @@ import type {
 declare const axios: import( 'axios' ).AxiosStatic;
 
 //// GLOBAL SELECTORS /////
-const addFavoriteButton = $<HTMLButtonElement>( '.add-favorite-btn' );
 const favoritesBox = $<HTMLDivElement>( '.favorites-box' );
+
+const addFavoriteButton = $<HTMLButtonElement>( '.add-favorite-btn' );
+const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
+
 const searchForm = $<HTMLFormElement>( '.search-form' );
 const ingredientsForm = $<HTMLFormElement>( '.ingredients-form' );
 const drinksForm = $<HTMLFormElement>( '.drinks-form' );
+
 const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
 const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
-const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
+
 const ingredientInput = $<HTMLInputElement>( '.ingredient-input' );
 const ingredientsDropdown = $<HTMLSelectElement>( '.ingredients-dropdown' );
 const lettersDropdown = $<HTMLSelectElement>( '.letters-dropdown' );
@@ -24,26 +28,25 @@ const drinkDropdown = $<HTMLSelectElement>( '.drink-dropdown' );
 
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.on( { click: addFavorite } );
-searchForm.on( { submit: getDrinkByName } );
-ingredientsForm.on( { submit: submitDrinkForm } );
-ingredientInput.on( { keyup: getDrinkByIngredient } );
-ingredientsDropdown.on( { change: () => ingredientsForm.trigger( 'submit' ) } );
-drinksForm.on( { submit: submitDrinkForm } );
-drinkDropdown.on( { change: () => drinksForm.trigger( 'submit' ) } );
 closeButton.on( {
     click: () => {
         alertMessage.text( '' );
         alertModal.addClass( 'hide' );
     }
 } );
+
+searchForm.on( { submit: getDrinkByName } );
+ingredientsForm.on( { submit: submitDrinkForm } );
+drinksForm.on( { submit: submitDrinkForm } );
+
+ingredientInput.on( { keyup: getDrinkByIngredient } );
+ingredientsDropdown.on( { change: () => ingredientsForm.trigger( 'submit' ) } );
+drinkDropdown.on( { change: () => drinksForm.trigger( 'submit' ) } );
 lettersDropdown.on( 'change', e => {
     const letter = e.target.value;
 
-    axios
-        .get<DrinksRes>( `/drinks/letter/${ letter }` )
-        .then( response => {
-            populateDrinkDropdown( response.data.drinks );
-        } );
+    getDrinksByLetter( letter )
+        .then( drinks => populateDrinkDropdown( '.drink-dropdown', drinks ) );
 } );
 
 // Invoke app start functions
@@ -117,7 +120,7 @@ function setupRandomCocktail () {
         click: () => {
             axios
                 .get<SingleDrinkRes>( 'https://www.thecocktaildb.com/api/json/v1/1/random.php' )
-                .then( response => displayCocktail( response.data.drinks[ 0 ] ) )
+                .then( res => displayCocktail( res.data.drinks[ 0 ] ) )
                 .catch( err => console.log( err ) );
         }
     } );
@@ -130,13 +133,13 @@ function getDrinkByName ( e: SubmitEvent ) {
 
     axios
         .get<SingleDrinkRes>( `/drinks/name/${ drinkName }` )
-        .then( response => {
-            if ( response.data.drinks == null ) {
+        .then( res => {
+            if ( res.data.drinks == null ) {
                 return alertUser(
                     'That drink does not exist or was spelled incorrectly. Please try again!'
                 );
             }
-            displayCocktail( response.data.drinks[ 0 ] );
+            displayCocktail( res.data.drinks[ 0 ] );
         } )
         .catch( err => console.log( err ) );
 
@@ -153,48 +156,36 @@ function getDrinkByIngredient ( e: KeyboardEvent ) {
 const ingredientSearch = debounce(
     ( ingredient: string ) => axios
         .get<DrinksRes>( `/drinks/ingredient/${ ingredient }` )
-        .then( response => {
-            populateIngredientsDropDown( response.data.drinks );
+        .then( res => {
+            populateDrinkDropdown(
+                '.ingredients-dropdown'
+                , res.data.drinks
+            );
         } )
         .catch( err => console.log( err ) )
     , 500 );
 
-function populateIngredientsDropDown ( drinks: Drink[] | undefined ) {
+function getDrinksByLetter ( letter: string ) {
+    return axios
+        .get<DrinksRes>( `/drinks/letter/${ letter }` )
+        .then( res => res.data.drinks );
+}
+
+function populateDrinkDropdown ( selector: string, drinks: Drink[] | undefined ) {
     if ( !drinks ) return;
 
     $( '.option' ).detach(); //remove old options before repopulating
 
-    for ( let i = 0; i < drinks.length; i++ ) {
-        const select = $<HTMLSelectElement>( '.ingredients-dropdown' );
-        const option = $<HTMLOptionElement>( '<option></option>' );
-
-        option.addClass( 'option' );
-
-        option.text( drinks[ i ]?.strDrink as string );
-        option.val( drinks[ i ]?.idDrink as string );
-
-        select.append( option );
-    }
+    appendDrinkSelectOptions(
+        $<HTMLSelectElement>( selector )
+        , drinks
+    );
 
     const firstDrink = drinks[ 0 ];
 
     firstDrink && displayCocktail( firstDrink );
 }
 
-function populateDrinkDropdown ( drinks: Drink[] ) {
-    $( '.option' ).detach(); //remove old options before repopulating
-
-    appendSelectOptions(
-        $<HTMLSelectElement>( '.drink-dropdown' )
-        , drinks
-    );
-
-    const firstDrink = drinks[ 0 ];
-
-    firstDrink && getDrinkById( firstDrink.idDrink );
-}
-
-////// POPULATE LETTERS DROPDOWN ////////
 function populateLettersDropdown () {
     const alpha = [
         'A', 'B', 'C', 'D', 'E', 'F'
@@ -237,10 +228,7 @@ function addFavorite () {
 
     axios
         .post<DrinkFavorite>( '/drinks/favorites', drinkFavorite )
-        .then( response => {
-            const { data } = response;
-            appendFavorite( data );
-        } )
+        .then( res => appendFavorite( res.data ) )
         .catch( error => {
             console.log( error );
         } );
@@ -278,8 +266,8 @@ function appendFavorite ( drinkFavorite: DrinkFavorite ) {
 function deleteFavorite ( drinkId: string ) {
     axios
         .delete<DeleteFavoriteRes>( `/drinks/favorites/${ drinkId }` )
-        .then( response => {
-            const { id } = response.data;
+        .then( res => {
+            const { id } = res.data;
 
             for ( let i = 0; i < favoritesBox.children().length; i++ ) {
                 const drinkToDelete = favoritesBox?.children().eq( i );
@@ -302,21 +290,15 @@ function deleteFavorite ( drinkId: string ) {
 
 function renderFavoritesOnLoad () {
     axios
-        .get( '/drinks' )
-        .then( response => {
-            response
-                .data
-                .forEach( ( drink: DrinkFavorite ) => appendFavorite( drink ) );
-        } )
+        .get<DrinkFavorite[]>( '/drinks' )
+        .then( res => res.data.forEach( drink => appendFavorite( drink ) ) )
         .catch( err => console.error( err ) );
 }
 
 function getDrinkById ( id: string ) {
     axios
         .get<SingleDrinkRes>( `/drinks/id/${ id }` )
-        .then( response => {
-            displayCocktail( response.data.drinks[ 0 ] );
-        } )
+        .then( res => displayCocktail( res.data.drinks[ 0 ] ) )
         .catch( err => console.log( err ) );
 }
 
@@ -333,7 +315,7 @@ function alertUser ( message: string ) {
 }
 
 //// UTILS ////
-function appendSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] ) {
+function appendDrinkSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] ) {
     for ( let i = 0; i < drinks.length; i++ ) {
         const option = $( '<option></option>' );
         option.addClass( 'option' );
