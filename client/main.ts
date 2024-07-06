@@ -11,6 +11,7 @@ declare const axios: import( 'axios' ).AxiosStatic;
 const addFavoriteButton = $<HTMLButtonElement>( '.add-favorite-btn' );
 const favoritesBox = $<HTMLDivElement>( '.favorites-box' );
 const searchForm = $<HTMLFormElement>( '.search-form' );
+const ingredientsForm = $<HTMLFormElement>( '.ingredients-form' );
 const alertModal = $<HTMLDivElement>( '.alert-wrapper' );
 const alertMessage = $<HTMLParagraphElement>( '.modal-message' );
 const closeButton = $<HTMLButtonElement>( '.modal-close-btn' );
@@ -19,6 +20,14 @@ const ingredientInput = $<HTMLInputElement>( '.ingredient-input' );
 ////// GLOBAL LISTENERS ///////
 addFavoriteButton.on( { click: addFavorite } );
 searchForm.on( { submit: getDrinkByName } );
+ingredientsForm.on( {
+    submit: e => {
+        e.preventDefault();
+        const data = getFormData<{ drink: Drink['idDrink'] }>( e.target );
+
+        getDrinkById( data.drink );
+    }
+} );
 ingredientInput.on( { keyup: getDrinkByIngredient } );
 closeButton.on( {
     click: () => {
@@ -140,7 +149,9 @@ const ingredientSearch = debounce(
         .catch( err => console.log( err ) )
     , 500 );
 
-function populateIngredientsDropDown ( drinks: Drink[] ) {
+function populateIngredientsDropDown ( drinks: Drink[] | undefined ) {
+    if ( !drinks ) return;
+
     $( '.option' ).detach(); //remove old options before repopulating
 
     for ( let i = 0; i < drinks.length; i++ ) {
@@ -154,17 +165,6 @@ function populateIngredientsDropDown ( drinks: Drink[] ) {
 
         select.append( option );
     }
-
-    $<HTMLFormElement>( '.ingredients-form' ).on( {
-        submit: e => {
-            e.preventDefault();
-            const select = ( e.target as HTMLFormElement )?.[ 1 ] as HTMLSelectElement;
-
-            const id = select?.options[ select.selectedIndex ]?.value as string;
-
-            getDrinkById( id );
-        }
-    } );
 }
 
 function populateDrinkDropdown ( drinks: Drink[] ) {
@@ -274,18 +274,19 @@ function addFavoriteItem ( drinkFavorite: DrinkFavorite ) {
         </div>
     ` );
 
-    const loadButton = favoriteLi.find<HTMLButtonElement>( '.load' );
-    loadButton.on( {
-        click: () => getDrinkById( id )
-    } );
+    favoriteLi
+        .find<HTMLButtonElement>( '.load' )
+        .on( {
+            click: () => getDrinkById( id )
+        } );
 
-    const selectedDrinkId = $( '.id-holder' ).attr( 'id' );
-    const favoriteId = favoriteLi.attr( 'id' );
+    // const selectedDrinkId = $( '.id-holder' ).attr( 'id' );
+    // const favoriteId = favoriteLi.attr( 'id' );
 
-    if ( selectedDrinkId === favoriteId ) {
-        loadButton.prop( 'disabled', true );
-        loadButton.css( 'pointer-events', 'none' );
-    }
+    // if ( selectedDrinkId === favoriteId ) {
+    //     loadButton.prop( 'disabled', true );
+    //     loadButton.css( 'pointer-events', 'none' );
+    // }
 
     favoriteLi
         .find<HTMLButtonElement>( '.delete-btn' )
@@ -359,4 +360,9 @@ function debounce<T extends ( ...args: never[] ) => void>( func: T, wait: number
         clearTimeout( timeout );
         timeout = setTimeout( later, wait );
     };
+}
+
+function getFormData <TData> ( form: HTMLFormElement ) {
+    return Object.fromEntries( new FormData( form ) ) as TData;
+
 }
