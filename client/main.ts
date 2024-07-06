@@ -160,9 +160,9 @@ function getAndLoadDrinkById ( id: string ) {
 
 function searchForDrinksByIngredient ( e: KeyboardEvent ) {
     e.preventDefault();
-    const ingredient = ( e.target as HTMLInputElement )?.value;
+    const ingredient = ( e.target as HTMLInputElement )?.value.trim();
 
-    ingredientSearch( ingredient );
+    ingredient && ingredientSearch( ingredient );
 }
 
 const ingredientSearch = debounce(
