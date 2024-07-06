@@ -1,17 +1,16 @@
 import type {
-    DeleteFavoriteRes
-    , Drink
+    Drink
     , DrinkDropdownFormData
     , DrinkFavorite
-    , DrinksRes
-    , SingleDrinkRes
 } from '../types/types.ts';
 import {
     addFavoriteDrink
     , deleteFavoriteDrink
+    , getDrinkById
     , getDrinkByName
     , getDrinksByIngredient
     , getDrinksByLetter
+    , getFavorites
     , getRandomCocktail
 } from './services.js';
 
@@ -42,7 +41,7 @@ closeButton.on( {
     }
 } );
 
-searchForm.on( { submit: getDrink } );
+searchForm.on( { submit: getAndLoadDrinkByName } );
 ingredientsForm.on( { submit: submitDrinkForm } );
 drinksForm.on( { submit: submitDrinkForm } );
 
@@ -53,7 +52,7 @@ lettersDropdown.on( 'change', e => {
     const letter = e.target.value;
 
     getDrinksByLetter( letter )
-        .then( drinks => populateDrinkDropdown( '.drink-dropdown', drinks ) );
+        .then( drinks => populateDropdown( '.drink-dropdown', drinks ) );
 } );
 
 // Invoke app start functions
@@ -67,13 +66,13 @@ lettersDropdown.on( 'change', e => {
         populateLettersDropdown();
         setupRandomCocktail();
 
-        if ( initialDrink ) displayCocktail( initialDrink );
+        if ( initialDrink ) renderCocktail( initialDrink );
     } catch ( err ) {
         console.log( err );
     }
 } )();
 
-function displayCocktail ( drink: Drink ) {
+function renderCocktail ( drink: Drink ) {
     if ( !drink ) return;
 
     const {
@@ -123,13 +122,15 @@ function displayCocktail ( drink: Drink ) {
 }
 
 function setupRandomCocktail () {
-    $<HTMLButtonElement>( '.random-cocktail' ).on( {
-        click: () => getRandomCocktail()
-            .then( cocktail => displayCocktail( cocktail ) )
-    } );
+    $<HTMLButtonElement>( '.random-cocktail' ).on(
+        {
+            click: () => getRandomCocktail()
+                .then( cocktail => renderCocktail( cocktail ) )
+        }
+    );
 }
 
-function getDrink ( e: SubmitEvent ) {
+function getAndLoadDrinkByName ( e: SubmitEvent ) {
     e.preventDefault();
     const nameInput = ( e.target as HTMLFormElement )[ 0 ] as HTMLInputElement;
     const drinkName = nameInput.value;
@@ -141,7 +142,8 @@ function getDrink ( e: SubmitEvent ) {
                     'That drink does not exist or was spelled incorrectly. Please try again!'
                 );
             }
-            displayCocktail( drink );
+
+            renderCocktail( drink );
         } )
         .catch( err => console.log( err ) );
 
@@ -159,7 +161,7 @@ const ingredientSearch = debounce(
     ( ingredient: string ) =>
         getDrinksByIngredient( ingredient )
             .then( drinks => {
-                populateDrinkDropdown(
+                populateDropdown(
                     '.ingredients-dropdown'
                     , drinks
                 );
@@ -167,7 +169,7 @@ const ingredientSearch = debounce(
             .catch( err => console.log( err ) )
     , 500 );
 
-function populateDrinkDropdown ( selector: string, drinks: Drink[] | undefined ) {
+function populateDropdown ( selector: string, drinks: Drink[] | undefined ) {
     if ( !drinks ) return;
 
     $( '.option' ).detach(); //remove old options before repopulating
@@ -179,7 +181,7 @@ function populateDrinkDropdown ( selector: string, drinks: Drink[] | undefined )
 
     const firstDrink = drinks[ 0 ];
 
-    firstDrink && displayCocktail( firstDrink );
+    firstDrink && renderCocktail( firstDrink );
 }
 
 function populateLettersDropdown () {
@@ -249,7 +251,7 @@ function appendFavorite ( drinkFavorite: DrinkFavorite ) {
 
     favoriteLi
         .find<HTMLButtonElement>( '.load' )
-        .on( { click: () => getDrinkById( id ) } );
+        .on( { click: () => getAndLoadDrinkById( id ) } );
 
     favoriteLi
         .find<HTMLButtonElement>( '.delete-btn' )
@@ -261,19 +263,13 @@ function appendFavorite ( drinkFavorite: DrinkFavorite ) {
 function deleteFavorite ( drinkId: string ) {
     deleteFavoriteDrink( drinkId )
         .then( id => {
-            for ( let i = 0; i < favoritesBox.children().length; i++ ) {
-                const drinkToDelete = favoritesBox?.children().eq( i );
+            const drinkToDelete = favoritesBox.children( `#${ id }` );
 
-                if ( drinkToDelete?.attr( 'id' ) === String( id ) ) {
-                    drinkToDelete
-                        .addClass( 'fall' )
-                        .on( 'transitionend'
-                            , () => {
-                                drinkToDelete.remove();
-                            }
-                        );
-                }
-            }
+            drinkToDelete
+                .addClass( 'fall' )
+                .on( 'transitionend'
+                    , () => drinkToDelete.remove()
+                );
         } )
         .catch( err => {
             console.log( err );
@@ -281,24 +277,22 @@ function deleteFavorite ( drinkId: string ) {
 }
 
 function renderFavoritesOnLoad () {
-    axios
-        .get<DrinkFavorite[]>( '/drinks' )
-        .then( res => res.data.forEach( drink => appendFavorite( drink ) ) )
+    getFavorites()
+        .then( favorites => favorites.forEach( drink => appendFavorite( drink ) ) )
         .catch( err => console.error( err ) );
 }
 
-function getDrinkById ( id: string ) {
-    axios
-        .get<SingleDrinkRes>( `/drinks/id/${ id }` )
-        .then( res => displayCocktail( res.data.drinks[ 0 ] ) )
+function getAndLoadDrinkById ( id: string ) {
+    getDrinkById( id )
+        .then( drink => renderCocktail( drink ) )
         .catch( err => console.log( err ) );
 }
 
 function submitDrinkForm ( e: SubmitEvent ) {
     e.preventDefault();
-    const data = getFormData<DrinkDropdownFormData>( e.target as HTMLFormElement );
+    const { drink: drinkId } = getFormData<DrinkDropdownFormData>( e.target as HTMLFormElement );
 
-    if ( data.drink ) getDrinkById( data.drink );
+    if ( drinkId ) getAndLoadDrinkById( drinkId );
 }
 
 function alertUser ( message: string ) {
