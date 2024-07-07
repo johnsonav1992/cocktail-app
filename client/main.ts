@@ -2,6 +2,8 @@ import type {
     Drink
     , DrinkDropdownFormData
     , DrinkFavorite
+    , DrinkSlim
+    , IngredientsDrinkRes
     , NameDropdownFormData
 } from '../types/types.ts';
 import {
@@ -53,7 +55,13 @@ lettersDropdown.on( 'change', e => {
     const letter = e.target.value;
 
     getDrinksByLetter( letter )
-        .then( drinks => populateDropdown( '.drink-dropdown', drinks ) );
+        .then( drinks => {
+            populateDropdown( '.drink-dropdown', drinks );
+
+            const firstDrink = drinks[ 0 ];
+
+            firstDrink && renderCocktail( firstDrink );
+        } );
 } );
 
 // Invoke app start functions
@@ -166,16 +174,21 @@ function searchForDrinksByIngredient ( e: KeyboardEvent ) {
 }
 
 const ingredientSearch = debounce(
-    ( ingredient: string ) =>
-        getDrinksByIngredient( ingredient )
-            .then( drinks => {
-                populateDropdown(
-                    '.ingredients-dropdown'
-                    , drinks
-                );
-            } )
-            .catch( err => console.log( err ) )
-    , 500 );
+    async ( ingredient: string ) => {
+        try {
+            const drinks = await getDrinksByIngredient( ingredient );
+            const firstDrink = await getDrinkById( drinks[ 0 ]?.idDrink as string );
+
+            populateDropdown( '.ingredients-dropdown', drinks );
+
+            firstDrink && renderCocktail( firstDrink );
+
+        } catch ( error ) {
+            console.error( error );
+        }
+    }
+    , 500
+);
 
 function submitDrinkForm ( e: SubmitEvent ) {
     e.preventDefault();
@@ -282,7 +295,7 @@ function alertUser ( message: string ) {
 }
 
 //// UTILS ////
-function populateDropdown ( selector: string, drinks: Drink[] | undefined ) {
+function populateDropdown ( selector: string, drinks: Drink[] | DrinkSlim[] | undefined ) {
     if ( !drinks ) return;
 
     $( '.option' ).detach(); //remove old options before repopulating
@@ -291,13 +304,9 @@ function populateDropdown ( selector: string, drinks: Drink[] | undefined ) {
         $<HTMLSelectElement>( selector )
         , drinks
     );
-
-    const firstDrink = drinks[ 0 ];
-
-    firstDrink && renderCocktail( firstDrink );
 }
 
-function appendDrinkSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] ) {
+function appendDrinkSelectOptions ( selectEl: JQuery<HTMLSelectElement>, drinks: Drink[] | DrinkSlim[] ) {
     for ( let i = 0; i < drinks.length; i++ ) {
         const option = $( '<option></option>' );
         option.addClass( 'option' );

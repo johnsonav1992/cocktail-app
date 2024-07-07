@@ -52,9 +52,12 @@ export type Drink = {
     dateModified: string;
 };
 
+export type DrinkSlim = Pick<Drink, 'idDrink' | 'strDrink' | 'strDrinkThumb'>;
+
 export type DrinksRes = { drinks: Drink[] };
 export type SingleDrinkRes = { drinks: [ Drink ] };
 export type DeleteFavoriteRes = Pick<DrinkFavorite, 'id'>;
+export type IngredientsDrinkRes = { drinks: DrinkSlim[] };
 
 export type DrinkFavorite = {
     id: string;

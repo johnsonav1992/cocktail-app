@@ -2,6 +2,7 @@ import type {
     DeleteFavoriteRes
     , DrinkFavorite
     , DrinksRes
+    , IngredientsDrinkRes
     , SingleDrinkRes
 } from '../types/types.js';
 
@@ -27,7 +28,7 @@ export async function getDrinkByName ( drinkName: string ) {
 
 export async function getDrinksByIngredient ( ingredient: string ) {
     return axios
-        .get<DrinksRes>( `/drinks/ingredient/${ ingredient }` )
+        .get<IngredientsDrinkRes>( `/drinks/ingredient/${ ingredient }` )
         .then( res => res.data.drinks );
 }
 

@@ -1,5 +1,4 @@
 import pkg from 'axios';
-const { AxiosError } = pkg;
 import dotenv from 'dotenv';
 import path from 'path';
 import { DatabaseError, Sequelize } from 'sequelize';

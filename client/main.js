@@ -29,7 +29,11 @@ drinkDropdown.on({ change: () => drinksForm.trigger('submit') });
 lettersDropdown.on('change', e => {
     const letter = e.target.value;
     getDrinksByLetter(letter)
-        .then(drinks => populateDropdown('.drink-dropdown', drinks));
+        .then(drinks => {
+        populateDropdown('.drink-dropdown', drinks);
+        const firstDrink = drinks[0];
+        firstDrink && renderCocktail(firstDrink);
+    });
 });
 // Invoke app start functions
 (async function appStart() {
@@ -110,11 +114,17 @@ function searchForDrinksByIngredient(e) {
     const ingredient = e.target?.value.trim();
     ingredient && ingredientSearch(ingredient);
 }
-const ingredientSearch = debounce((ingredient) => getDrinksByIngredient(ingredient)
-    .then(drinks => {
-    populateDropdown('.ingredients-dropdown', drinks);
-})
-    .catch(err => console.log(err)), 500);
+const ingredientSearch = debounce(async (ingredient) => {
+    try {
+        const drinks = await getDrinksByIngredient(ingredient);
+        const firstDrink = await getDrinkById(drinks[0]?.idDrink);
+        populateDropdown('.ingredients-dropdown', drinks);
+        firstDrink && renderCocktail(firstDrink);
+    }
+    catch (error) {
+        console.error(error);
+    }
+}, 500);
 function submitDrinkForm(e) {
     e.preventDefault();
     const { drink: drinkId } = getFormData(e.target);
@@ -198,8 +208,6 @@ function populateDropdown(selector, drinks) {
         return;
     $('.option').detach(); //remove old options before repopulating
     appendDrinkSelectOptions($(selector), drinks);
-    const firstDrink = drinks[0];
-    firstDrink && renderCocktail(firstDrink);
 }
 function appendDrinkSelectOptions(selectEl, drinks) {
     for (let i = 0; i < drinks.length; i++) {
