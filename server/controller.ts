@@ -4,8 +4,6 @@ import type {
     RequestHandler
     , Response
 } from 'express';
-dotenv.config();
-const { DATABASE_URL } = process.env;
 import path from 'path';
 import {
     DatabaseError
@@ -15,6 +13,9 @@ import type {
     Drink
     , DrinkFavorite
 } from '../types/types.js';
+
+dotenv.config();
+const { DATABASE_URL } = process.env;
 
 const sequelize = new Sequelize( DATABASE_URL!, {
     dialect: 'postgres'
@@ -49,13 +50,7 @@ export const getDrinksByLetter: RequestHandler<{ letter: string }> = ( req, res 
                 .status( 200 )
                 .json( response.data );
         } )
-        .catch( ( err: AxiosError ) => {
-            console.log( err );
-
-            res
-                .status( +err.code! )
-                .json( err );
-        } );
+        .catch( ( err: AxiosError ) => handleAxiosError( err, res ) );
 };
 
 export const getDrinkByIngredient: RequestHandler<{ ingredient: string }> = ( req, res ) => {
@@ -66,13 +61,7 @@ export const getDrinkByIngredient: RequestHandler<{ ingredient: string }> = ( re
         .then( response => {
             res.status( 200 ).send( response.data );
         } )
-        .catch( ( err: AxiosError ) => {
-            console.log( err );
-
-            res
-                .status( +err.code! )
-                .json( err );
-        } );
+        .catch( ( err: AxiosError ) => handleAxiosError( err, res ) );
 };
 
 export const searchDrinkByName: RequestHandler<{ name: string }> = ( req, res ) => {
@@ -83,13 +72,7 @@ export const searchDrinkByName: RequestHandler<{ name: string }> = ( req, res ) 
         .then( response => {
             res.status( 200 ).send( response.data );
         } )
-        .catch( ( err: AxiosError ) => {
-            console.log( err );
-
-            res
-                .status( +err.code! )
-                .json( err );
-        } );
+        .catch( ( err: AxiosError ) => handleAxiosError( err, res ) );
 };
 
 export const getDrinkById: RequestHandler<{ id: string }> = ( req, res ) => {
@@ -100,13 +83,7 @@ export const getDrinkById: RequestHandler<{ id: string }> = ( req, res ) => {
         .then( response => {
             res.status( 200 ).send( response.data );
         } )
-        .catch( ( err: AxiosError ) => {
-            console.log( err );
-
-            res
-                .status( +err.code! )
-                .json( err );
-        } );
+        .catch( ( err: AxiosError ) => handleAxiosError( err, res ) );
 };
 
 export const addFavorite: RequestHandler<DrinkFavorite> = ( req, res ) => {
@@ -172,4 +149,12 @@ const handleDbError = ( err: DatabaseError, res: Response ) => {
     res
         .status( 500 )
         .json( { message: 'An error occurred on the server. Please try again.' } );
+};
+
+const handleAxiosError = ( err: AxiosError, res: Response ) => {
+    console.log( err );
+
+    res
+        .status( +err.code! )
+        .json( err );
 };

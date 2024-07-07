@@ -2,7 +2,8 @@
     "extends": "./node_modules/johnsonav-eslint-config",
     "env": {
       "browser": true,
-      "jquery": true
+      "jquery": true,
+      "process": true
     },
     "globals": {
       "globalThis": false,
