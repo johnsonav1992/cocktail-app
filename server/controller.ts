@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios';
+import pkg from 'axios';
+type AxiosError = pkg.AxiosError;
 import dotenv from 'dotenv';
 import type {
     RequestHandler
@@ -16,6 +17,7 @@ import type {
 
 dotenv.config();
 const { DATABASE_URL } = process.env;
+const axios = pkg.default;
 
 const sequelize = new Sequelize( DATABASE_URL!, {
     dialect: 'postgres'
@@ -43,7 +45,7 @@ export const getHomePage: RequestHandler = ( req, res ) => {
 export const getDrinksByLetter: RequestHandler<{ letter: string }> = ( req, res ) => {
     const { letter } = req.params;
 
-    axios.default
+    axios
         .get<Drink[]>( `${ LETTER_COCKTAIL_URL }${ letter }` )
         .then( response => {
             res
@@ -56,7 +58,7 @@ export const getDrinksByLetter: RequestHandler<{ letter: string }> = ( req, res 
 export const getDrinkByIngredient: RequestHandler<{ ingredient: string }> = ( req, res ) => {
     const { ingredient } = req.params;
 
-    axios.default
+    axios
         .get( `${ INGREDIENT_COCKTAIL_URL }${ ingredient }` )
         .then( response => {
             res.status( 200 ).send( response.data );
@@ -67,7 +69,7 @@ export const getDrinkByIngredient: RequestHandler<{ ingredient: string }> = ( re
 export const searchDrinkByName: RequestHandler<{ name: string }> = ( req, res ) => {
     const { name } = req.params;
 
-    axios.default
+    axios
         .get( `${ NAME_COCKTAIL_URL }${ name }` )
         .then( response => {
             res.status( 200 ).send( response.data );
@@ -78,7 +80,7 @@ export const searchDrinkByName: RequestHandler<{ name: string }> = ( req, res ) 
 export const getDrinkById: RequestHandler<{ id: string }> = ( req, res ) => {
     const { id } = req.params;
 
-    axios.default
+    axios
         .get( `${ ID_COCKTAIL_URL }${ id }` )
         .then( response => {
             res.status( 200 ).send( response.data );
