@@ -3,7 +3,6 @@ import type {
     , DrinkDropdownFormData
     , DrinkFavorite
     , DrinkSlim
-    , IngredientsDrinkRes
     , NameDropdownFormData
 } from '../types/types.ts';
 import {
