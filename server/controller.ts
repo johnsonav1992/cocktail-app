@@ -1,6 +1,9 @@
 import axios, { AxiosError } from 'axios';
 import dotenv from 'dotenv';
-import type { RequestHandler } from 'express';
+import type {
+    RequestHandler
+    , Response
+} from 'express';
 dotenv.config();
 const { DATABASE_URL } = process.env;
 import path from 'path';
@@ -129,13 +132,7 @@ export const addFavorite: RequestHandler<DrinkFavorite> = ( req, res ) => {
                     , letter
                 } );
         } )
-        .catch( ( err: DatabaseError ) => {
-            console.log( err.message );
-
-            res
-                .status( 500 )
-                .json( { message: 'An error occurred on the server. Please try again.' } );
-        } );
+        .catch( ( err: DatabaseError ) => handleDbError( err, res ) );
 };
 
 export const deleteFavorite: RequestHandler<{ drinkId: string }> = ( req, res ) => {
@@ -153,13 +150,7 @@ export const deleteFavorite: RequestHandler<{ drinkId: string }> = ( req, res ) 
                 .status( 200 )
                 .send( { id: drinkId } );
         } )
-        .catch( ( err: DatabaseError ) => {
-            console.log( err.message );
-
-            res
-                .status( 500 )
-                .json( { message: 'An error occurred on the server. Please try again.' } );
-        } );
+        .catch( ( err: DatabaseError ) => handleDbError( err, res ) );
 };
 
 export const getFavorites: RequestHandler = ( req, res ) => {
@@ -172,11 +163,13 @@ export const getFavorites: RequestHandler = ( req, res ) => {
                 .status( 200 )
                 .send( dbRes[ 0 ] );
         } )
-        .catch( ( err: DatabaseError ) => {
-            console.log( err.message );
+        .catch( ( err: DatabaseError ) => handleDbError( err, res ) );
+};
 
-            res
-                .status( 500 )
-                .json( { message: 'An error occurred on the server. Please try again.' } );
-        } );
+const handleDbError = ( err: DatabaseError, res: Response ) => {
+    console.log( err.message );
+
+    res
+        .status( 500 )
+        .json( { message: 'An error occurred on the server. Please try again.' } );
 };
