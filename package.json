@@ -9,8 +9,8 @@
     "start": "node dist/server.js",
     "dev": "tsc --watch",
     "build": "npm run clean && tsc && npm run copy-files",
-    "clean": "rm -rf ./dist",
-    "copy-files": "rsync -av --exclude='*.ts' ./client/ ./dist/client/"
+    "clean": "rimraf dist/",
+    "copy-files": "copyfiles -u 1 client/**/*.html client/**/*.css client/fonts/** client/images/** dist/client/"
   },
   "repository": {
     "type": "git",
@@ -38,9 +38,11 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jquery": "^3.5.30",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.57.0",
     "johnsonav-eslint-config": "^0.0.4",
     "nodemon": "^3.1.4",
+    "rimraf": "^6.0.0",
     "typescript": "^5.5.3"
   }
 }
