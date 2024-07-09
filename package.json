@@ -6,8 +6,11 @@
   "type": "module",
   "scripts": {
     "devStart": "nodemon server.js",
-    "start": "node server.js",
-    "dev": "tsc --watch"
+    "start": "node dist/server.js",
+    "dev": "tsc --watch",
+    "build": "npm run clean && tsc && npm run copy-files",
+    "clean": "rm -rf ./dist",
+    "copy-files": "rsync -av --exclude='*.ts' ./client/ ./dist/client/"
   },
   "repository": {
     "type": "git",

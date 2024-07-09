@@ -1,3 +1,4 @@
+import type { Application } from 'express';
 import {
     getDrinksByLetter
     , addFavorite
@@ -9,7 +10,7 @@ import {
 } from './controller.js';
 import { seed } from './seedDb.js';
 
-export default app => {
+export default ( app: Application ) => {
     app.get( '/drinks/letter/:letter', getDrinksByLetter );
     app.get( '/drinks/ingredient/:ingredient', getDrinkByIngredient );
     app.get( '/drinks/name/:name', searchDrinkByName );

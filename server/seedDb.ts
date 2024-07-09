@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
+import type { RequestHandler } from 'express';
+import { Sequelize } from 'sequelize';
 dotenv.config();
-import Sequelize from 'sequelize';
 
 const { DATABASE_URL } = process.env;
 
-const sequelize = new Sequelize( DATABASE_URL, {
+const sequelize = new Sequelize( DATABASE_URL!, {
     dialect: 'postgres'
     , dialectOptions: {
         ssl: {
@@ -13,7 +14,7 @@ const sequelize = new Sequelize( DATABASE_URL, {
     }
 } );
 
-export const seed = ( req, res ) => {
+export const seed: RequestHandler = ( req, res ) => {
     sequelize.query( `
         DROP TABLE IF EXISTS favorite_drinks;
 

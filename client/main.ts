@@ -4,7 +4,7 @@ import type {
     , DrinkFavorite
     , DrinkSlim
     , NameDropdownFormData
-} from '../types/types.ts';
+} from '../types/types.js';
 import {
     addFavoriteDrink
     , deleteFavoriteDrink
